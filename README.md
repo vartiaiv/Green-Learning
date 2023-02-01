@@ -1,16 +1,14 @@
 # Green-Learning
-This is a course project so the instructions here are written the group members in mind.  
-
 The goal is to experiment with neural networks and find an efficient (low computation) solutions for a machine learning problem.
 
-## Setup from scratch
-
-I recommend installing an **Anaconda** Python distribution because it comes with both **conda** and **pip** package managers.  
-The correct environment can be setup with them.  
-
-**Project dependencies:**  
+**The package dependencies:**  
 - PyTorch (CPU or GPU)  
 - THOP
+
+## Setup run environment from scratch
+
+I recommend installing an **Anaconda** Python distribution because it comes with both **conda** and **pip** package managers.  
+The correct environment should be easy to setup with **conda**.  
 
 **1. Create a new conda environment on command line and activate it**  
 `conda env -n gl`  
@@ -52,15 +50,17 @@ After installing Python on VSCode you may also need to select the correct Python
 Use the one from the **conda environment you created in step 1** of the setup so that the packages are available.  
 You can select the interpreter with **Ctrl+Shift+P** and by typing "python select interpreter" in the search box.  
 
-Now try opening a Python script in the editor and run it by pressing F5.  
-If there isn't a run configuration in `.vscode\launch.json` yet, it needs to be configured now with Run->Add configuration. 
-The default configuration runs the active file in editor.
+Now try opening (or creating) a Python script in the editor and run it by pressing F5.  
+If there isn't a run configuration in `.vscode\launch.json` yet, it needs to be configured now. 
+The default configuration runs the active file in editor. 
 
 If you want instead a specific run configuration, go to Run->Open configurations (or open `.vscode\launch.json`).  
 There, if you change text `"program": "${file}",` into `"program": "${workspaceFolder}\\script.py",`,
-pressing F5 now runs `script.py` in the workspace folder.
+pressing F5 now runs `script.py` in the workspace folder regardless of the active file.
 
 ## Troubleshooting
-In VSCode if you cannot find the Python interpreter you wanted, you need to add the following location to the PATH:  
-`C:\Users\<yourname>\anaconda3\Scripts`  
-(this is the location by default when installing Anaconda on Windows)
+- In VSCode if you cannot find the Python interpreter you wanted, you need to add the following (or similar) location to the PATH:  
+  `C:\Users\<yourname>\anaconda3\Scripts`  
+  (this is the location by default when installing Anaconda on Windows)
+- If you want to setup the VSCode run configurations from a clean slate, just delete the file `.vscode\launch.json`  
+  and go to Run->Add configuration (Python file).
