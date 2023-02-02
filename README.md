@@ -1,9 +1,10 @@
 # Green-Learning
 The goal is to experiment with neural networks and find an efficient (low computation) solutions for a machine learning problem.
 
-**The package dependencies:**  
+**The packages installed:**  
 - PyTorch (CPU or GPU)  
 - THOP
+- their dependencies (installed automatically)
 
 ## Setup run environment from scratch
 
