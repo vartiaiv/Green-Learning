@@ -3,6 +3,8 @@ The goal is to experiment with neural networks and find an efficient (low comput
 
 **The packages installed:**  
 - PyTorch (CPU or GPU)  
+- TorchAudio (audio processing and I/O)
+- TorchVision (image processing and I/O)
 - THOP
 - their dependencies (installed automatically)
 
