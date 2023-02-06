@@ -6,6 +6,7 @@ The goal is to experiment with neural networks and find an efficient (low comput
 - TorchAudio (audio processing and I/O)
 - TorchVision (image processing and I/O)
 - THOP
+- Matplotlib
 - their dependencies (installed automatically)
 
 ## Setup run environment from scratch
@@ -40,6 +41,9 @@ or
 
 **3. Install THOP: PyTorch-OpCounter**  
 `pip install thop`
+
+**4. Install Matplotlib**  
+`conda install matplotlib`
 
 ## Running the code
 ### Command line
