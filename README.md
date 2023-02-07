@@ -7,6 +7,8 @@ The goal is to experiment with neural networks and find an efficient (low comput
 - TorchVision (image processing and I/O)
 - THOP
 - Matplotlib
+- Scikit-learn (Sklearn)
+- Scikit-image (Skimage)
 
 Other dependencies are installed automatically if following the setup instructions.  
 (Also, Pickle is part of Python standard library these days, so no need to install it separately)
@@ -46,6 +48,10 @@ or
 
 **4. Install Matplotlib**  
 `conda install matplotlib`
+
+**5. Install Scikit-learn and Scikit-image**  
+`conda install -c conda-forge scikit-learn`
+`conda install scikit-image`
 
 ## Running the code
 ### Command line
