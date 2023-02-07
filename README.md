@@ -9,8 +9,12 @@ The goal is to experiment with neural networks and find an efficient (low comput
 - Matplotlib
 - Scikit-learn (Sklearn)
 - Scikit-image (Skimage)
+- Abseil-py for command line flags compatible with Tensorflow syntax
 
 Other dependencies are installed automatically if following the setup instructions.  
+Of the packages Abseil-py is the least important one if we don't want/need make the scripts command line friendly.
+
+
 (Also, Pickle is part of Python standard library these days, so no need to install it separately)
 
 ## Setup run environment from scratch
@@ -52,6 +56,9 @@ or
 **5. Install Scikit-learn and Scikit-image**  
 `conda install -c conda-forge scikit-learn`  
 `conda install scikit-image`
+
+**6. Install Abseil-py**  
+`pip install absl-py`  
 
 ## Running the code
 ### Command line
