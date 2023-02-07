@@ -137,8 +137,8 @@ def tensorAutogradTest():
         # values of y, and the loss function returns a Tensor containing the
         # loss.
         loss = loss_fn(y_pred, y)
-        LEN_10_p = int(round(LEN*0.1))
-        if t % (LEN_10_p) == LEN_10_p-1:
+        LEN_5_percent = int(round(LEN*0.05))
+        if t % (LEN_5_percent) == LEN_5_percent-1:
             print(t, loss.item())
 
         # Zero the gradients before running the backward pass.
