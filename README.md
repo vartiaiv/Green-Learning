@@ -16,8 +16,8 @@ The approach is to use a feedforward network using SAAB (https://github.com/davi
 Other dependencies are installed automatically if following the setup instructions.  
 
 **Notes:**  
-Abseil-py is used for for . The original project used them as an easy and legible way to set parameters for multiclass classification such as the class IDs.  
-Pickle is part of Python standard library these days, so no need to install it separately
+- Abseil-py is used for for . The original project used them as an easy and legible way to set parameters for multiclass classification such as the class IDs.  
+- Pickle is part of Python standard library these days, so no need to install it separately
 
 ## Setup run environment from scratch
 
