@@ -50,7 +50,7 @@ or
 `conda install matplotlib`
 
 **5. Install Scikit-learn and Scikit-image**  
-`conda install -c conda-forge scikit-learn`
+`conda install -c conda-forge scikit-learn`  
 `conda install scikit-image`
 
 ## Running the code
