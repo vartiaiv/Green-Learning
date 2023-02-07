@@ -7,7 +7,9 @@ The goal is to experiment with neural networks and find an efficient (low comput
 - TorchVision (image processing and I/O)
 - THOP
 - Matplotlib
-- their dependencies (installed automatically)
+
+Other dependencies are installed automatically if following the setup instructions.  
+(Also, Pickle is part of Python standard library these days, so no need to install it separately)
 
 ## Setup run environment from scratch
 
