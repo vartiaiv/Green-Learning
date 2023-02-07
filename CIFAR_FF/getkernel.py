@@ -1,22 +1,23 @@
-from absl import app
-from absl import flags
-from absl import logging
-# from tensorflow.python.platform import flags
-import pickle
 import data
 import saab
 
-flags.DEFINE_string("output_path", None, "The output dir to save params")
-flags.DEFINE_string("use_classes", "0-9", "Supported format: 0,1,5-9")
-flags.DEFINE_string("kernel_sizes", "5,5", "Kernels size for each stage. Format: '3,3'")
-flags.DEFINE_string("num_kernels", "31,63", "Num of kernels for each stage. Format: '4,10'")
-flags.DEFINE_float("energy_percent", None, "Energy to be preserved in each stage")
-flags.DEFINE_integer("use_num_images", -1, "Num of images used for training")
-FLAGS = flags.FLAGS
+from absl import app
+from absl import flags
+from absl.flags import FLAGS
+from absl import logging
+import pickle
 
-def getkernel():
+# define flags
+flags.DEFINE_string('output_path', None, "The output dir to save params")
+flags.DEFINE_string('use_classes', "0-9", "Supported format: 0,1,5-9")
+flags.DEFINE_string('kernel_sizes', "5,5", "Kernels size for each stage. Format: '3,3'")
+flags.DEFINE_string('num_kernels', "31,63", "Num of kernels for each stage. Format: '4,10'")
+flags.DEFINE_float('energy_percent', None, "Energy to be preserved in each stage")
+flags.DEFINE_integer('use_num_images', -1, "Num of images used for training")
+
+def main(argv):
     # read data
-    train_images, train_labels, test_images, test_labels, class_list = data.import_data(FLAGS.use_classes)
+    train_images, train_labels, test_images, _, class_list = data.import_data(FLAGS.use_classes)
     print('Training image size:', train_images.shape)
     print('Testing_image size:', test_images.shape)
 
@@ -43,3 +44,9 @@ def getkernel():
     # save data
     with open('pca_params.pkl','wb') as fw:
         pickle.dump(pca_params, fw)
+
+if __name__ == "__main__":
+    try:
+        app.run(main)
+    except SystemExit:
+        pass

@@ -1,17 +1,11 @@
-import pickle
-# import keras
 import data
-# from keras.datasets import cifar10
+
+import pickle
 import numpy as np
 import sklearn
-# import cv2
-from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
-from numpy import linalg as LA
-import matplotlib.pyplot as plt
 from sklearn.metrics.pairwise import euclidean_distances
 
-def test_cifar10():
+def main():
     with open('llsr_weights.pkl','rb') as fr:
         weights = pickle.load(fr, encoding='latin1')
     with open('llsr_bias.pkl','rb') as fr:
@@ -51,3 +45,6 @@ def test_cifar10():
             pred_labels = np.argmax(feature, axis=1)
             acc_test = sklearn.metrics.accuracy_score(test_labels,pred_labels)
             print('testing acc is {}'.format(acc_test))
+
+if __name__ == "__main__":
+    main()

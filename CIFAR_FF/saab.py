@@ -1,14 +1,13 @@
 import numpy as np
 from skimage.util.shape import view_as_windows
-
+from skimage.measure import block_reduce
 from sklearn.decomposition import PCA
 from numpy import linalg as LA
-from skimage.measure import block_reduce
-
 import matplotlib.pyplot as plt
 
+
 def parse_list_string(list_string):
-    """Convert the class string to list."""
+    """ Convert the class string to list."""
     elem_groups = list_string.split(",")
     results = []
     for group in elem_groups:
@@ -21,6 +20,7 @@ def parse_list_string(list_string):
             results += range(start, end+1)
     return results
 
+
 # convert responses to patches representation
 def window_process(samples, kernel_size, stride):
     '''
@@ -31,12 +31,21 @@ def window_process(samples, kernel_size, stride):
     :return patches: flattened, [num_samples, output_h, output_w, feature_channel*kernel_size^2]
 
     '''
-    n, h, w, c = samples.shape
+    n, h, w, c = samples.shape  
+    patches = view_as_windows(
+        arr_in=np.ascontiguousarray(samples), 
+        window_shape=(1, kernel_size, kernel_size, c), 
+        step=(1, stride, stride, c))
+    
     output_h = (h - kernel_size) // stride + 1
     output_w = (w - kernel_size) // stride + 1
-    patches = view_as_windows(np.ascontiguousarray(samples), (1, kernel_size, kernel_size, c), step=(1, stride, stride, c))
+
+
+    # OOM on next line: Unable to allocate 29.8 GiB for an array with shape (50000, 10, 10, 1, 1, 5, 5, 32) and data type float64
     patches = patches.reshape(n, output_h, output_w, c*kernel_size*kernel_size)
+
     return patches
+
 
 def remove_mean(features, axis):
     '''
@@ -45,33 +54,35 @@ def remove_mean(features, axis):
     :param axis the axis to compute mean
     
     '''
-    feature_mean=np.mean(features,axis=axis,keepdims=True)
-    feature_remove_mean=features-feature_mean
-    return feature_remove_mean,feature_mean
+    feature_mean = np.mean(features,axis=axis,keepdims=True)
+    feature_remove_mean = features-feature_mean
+
+    return feature_remove_mean, feature_mean
+
 
 def select_balanced_subset(images, labels, use_num_images, use_classes):
     '''
     select equal number of images from each classes
     '''
     # Shuffle
-    num_total=images.shape[0]
-    shuffle_idx=np.random.permutation(num_total)
-    images=images[shuffle_idx]
-    labels=labels[shuffle_idx]
+    num_total = images.shape[0]
+    shuffle_idx = np.random.permutation(num_total)
+    images = images[shuffle_idx]
+    labels = labels[shuffle_idx]
 
-    num_class=len(use_classes)
-    num_per_class=int(use_num_images/num_class)
-    selected_images=np.zeros((use_num_images,images.shape[1],images.shape[2],images.shape[3]))
-    selected_labels=np.zeros(use_num_images)
+    num_class = len(use_classes)
+    num_per_class = int(use_num_images/num_class)
+    selected_images = np.zeros((use_num_images,images.shape[1],images.shape[2],images.shape[3]))
+    selected_labels = np.zeros(use_num_images)
     for i in range(num_class):
         # images_in_class=images[labels==i]
         idx = (labels == i)
-        index=np.where(idx == True)[0]
-        images_in_class=np.zeros((index.shape[0],images.shape[1],images.shape[2],images.shape[3]))
+        index = np.where(idx == True)[0]
+        images_in_class = np.zeros((index.shape[0],images.shape[1],images.shape[2],images.shape[3]))
         for j in range(index.shape[0]):
-            images_in_class[j]=images[index[j]]
-        selected_images[i*num_per_class:(i+1)*num_per_class]=images_in_class[:num_per_class]
-        selected_labels[i*num_per_class:(i+1)*num_per_class]=np.ones((num_per_class))*i
+            images_in_class[j] = images[index[j]]
+        selected_images[i*num_per_class:(i+1)*num_per_class] = images_in_class[:num_per_class]
+        selected_labels[i*num_per_class:(i+1)*num_per_class] = np.ones((num_per_class))*i
 
     # Shuffle again
     shuffle_idx = np.random.permutation(num_per_class*num_class)
@@ -85,7 +96,8 @@ def select_balanced_subset(images, labels, use_num_images, use_classes):
     # 	img=selected_images[i,:,:,0]
     # 	plt.imshow(img)
     # 	plt.show()
-    return selected_images,selected_labels
+    return selected_images, selected_labels
+
 
 def remove_zero_patch(samples):
     std_var = (np.std(samples, axis=1)).reshape(-1,1)
@@ -94,6 +106,7 @@ def remove_zero_patch(samples):
     print('zero patch shape:', ind.shape)
     samples_new=np.delete(samples, ind, 0)
     return samples_new
+
 
 def find_kernels_pca(sample_patches, num_kernels, energy_percent):
     '''
@@ -112,7 +125,7 @@ def find_kernels_pca(sample_patches, num_kernels, energy_percent):
     # Remove feature mean (Set E(X)=0 for each dimension)
     training_data, feature_expectation = remove_mean(sample_patches_centered, axis=0)
 
-    pca = PCA(n_components=training_data.shape[1], svd_solver='full',whiten=True)
+    pca = PCA(n_components=training_data.shape[1], svd_solver='full', whiten=True)
     pca.fit(training_data)
 
     # fig=plt.figure(1)
@@ -150,6 +163,7 @@ def find_kernels_pca(sample_patches, num_kernels, energy_percent):
     print("Energy percent: %f"%np.cumsum(pca.explained_variance_ratio_)[num_components-1])
     return kernels, mean
 
+
 def multi_Saab_transform(images, labels, kernel_sizes, num_kernels, energy_percent, use_num_images, use_classes):
     '''
     Do the PCA "training".
@@ -168,20 +182,20 @@ def multi_Saab_transform(images, labels, kernel_sizes, num_kernels, energy_perce
 
     num_total_images = images.shape[0]
     if use_num_images < num_total_images and use_num_images > 0:
-        sample_images, selected_labels=select_balanced_subset(images, labels, use_num_images, use_classes)
+        sample_images, selected_labels = select_balanced_subset(images, labels, use_num_images, use_classes)
     else:
         sample_images = images
     # sample_images=images
     num_samples = sample_images.shape[0]
     num_layers = len(kernel_sizes)
     pca_params = {}
-    pca_params['num_layers']=num_layers
-    pca_params['kernel_size']=kernel_sizes
+    pca_params['num_layers'] = num_layers
+    pca_params['kernel_size'] = kernel_sizes
 
     for i in range(num_layers):
         print('--------stage %d --------'%i)
         # Create patches
-        sample_patches = window_process(sample_images,kernel_sizes[i],1) # overlapping
+        sample_patches = window_process(sample_images,kernel_sizes[i], 1) # overlapping
         h = sample_patches.shape[1]
         w = sample_patches.shape[2]
         # Flatten
@@ -202,16 +216,16 @@ def multi_Saab_transform(images, labels, kernel_sizes, num_kernels, energy_perce
             bias = np.max(bias)
             pca_params['Layer_%d/bias'%i]=bias
             # Add bias
-            sample_patches_centered_w_bias = sample_patches+1/np.sqrt(num_channels)*bias
+            sample_patches_centered_w_bias = sample_patches + (1/np.sqrt(num_channels)*bias)
             # Transform to get data for the next stage
-            transformed=np.matmul(sample_patches_centered_w_bias, np.transpose(kernels))
+            transformed = np.matmul(sample_patches_centered_w_bias, np.transpose(kernels))
             # Remove bias
             e = np.zeros((1, kernels.shape[0]))
             e[0,0] = 1
             transformed -= bias*e
 
         # Reshape: place back as a 4-D feature map
-        sample_images = transformed.reshape(num_samples, h, w,-1)
+        sample_images = transformed.reshape(num_samples, h, w, -1)
 
         # Maxpooling
         sample_images = block_reduce(sample_images, (1,2,2,1), np.max)
@@ -227,6 +241,7 @@ def multi_Saab_transform(images, labels, kernel_sizes, num_kernels, energy_perce
 
     return pca_params
 
+
 # Initialize
 def initialize(sample_images, pca_params):
 
@@ -240,20 +255,20 @@ def initialize(sample_images, pca_params):
         mean = pca_params['Layer_%d/pca_mean'%i]
 
         # Create patches
-        sample_patches = window_process(sample_images,kernel_sizes[i],1) # overlapping
+        sample_patches = window_process(sample_images,kernel_sizes[i], 1) # overlapping
         h = sample_patches.shape[1]
         w = sample_patches.shape[2]
         # Flatten
         sample_patches = sample_patches.reshape([-1, sample_patches.shape[-1]])
 
         num_channels = sample_patches.shape[-1]
-        if i==0:
+        if i == 0:
             # Transform to get data for the next stage
             transformed = np.matmul(sample_patches, np.transpose(kernels))
         else:
             bias = pca_params['Layer_%d/bias'%i]
             # Add bias
-            sample_patches_centered_w_bias = sample_patches+1/np.sqrt(num_channels)*bias
+            sample_patches_centered_w_bias = sample_patches + (1/np.sqrt(num_channels)*bias)
             # Transform to get data for the next stage
             transformed = np.matmul(sample_patches_centered_w_bias, np.transpose(kernels))
             # Remove bias
@@ -263,7 +278,7 @@ def initialize(sample_images, pca_params):
         
         # Reshape: place back as a 4-D feature map
         num_samples = sample_images.shape[0]
-        sample_images = transformed.reshape(num_samples, h, w,-1)
+        sample_images = transformed.reshape(num_samples, h, w, -1)
 
         # Maxpooling
         sample_images = block_reduce(sample_images, (1,2,2,1), np.max)
