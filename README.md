@@ -1,21 +1,23 @@
 # Green-Learning
 The goal is to experiment with neural networks and find an efficient (low computation) solutions for a machine learning problem.
 
+The approach is to use a feedforward network using SAAB (https://github.com/davidsonic/Interpretable_CNNs_via_Feedforward_Design) and compare it with a traditional CNN such as AlexNet.
+
 **The packages installed:**  
 - PyTorch (CPU or GPU)  
 - TorchAudio (audio processing and I/O)
 - TorchVision (image processing and I/O)
 - THOP
 - Matplotlib
-- Scikit-learn (Sklearn)
-- Scikit-image (Skimage)
-- Abseil-py for command line flags compatible with Tensorflow syntax
+- Scikit-learn (preprocessing the data at hand)
+- Scikit-image (preprocessing the data at hand)
+- Abseil-py (command line flags compatible with Tensorflow syntax)
 
 Other dependencies are installed automatically if following the setup instructions.  
-Of the packages Abseil-py is the least important one if we don't want/need make the scripts command line friendly.
 
-
-(Also, Pickle is part of Python standard library these days, so no need to install it separately)
+**Notes:**  
+Abseil-py is used for for . The original project used them as an easy and legible way to set parameters for multiclass classification such as the class IDs.  
+Pickle is part of Python standard library these days, so no need to install it separately
 
 ## Setup run environment from scratch
 
