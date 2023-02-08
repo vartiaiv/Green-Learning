@@ -20,10 +20,12 @@ Other dependencies are installed automatically if following the setup instructio
 - Abseil-py is used for for . The original project used them as an easy and legible way to set parameters for multiclass classification such as the class IDs.  
 - Pickle is part of Python standard library these days, so no need to install it separately
 
-## Setup run environment from scratch
+## Setup run environment
 
 I recommend installing an **Anaconda** Python distribution because it comes with both **conda** and **pip** package managers.  
 The correct environment should be easy to setup with **conda**.  
+
+### Installing dependencies
 
 **1. Create a new conda environment on command line and activate it**  
 `conda env -n gl`  
@@ -57,6 +59,17 @@ or
 `conda install scikit-image`  
 `pip install absl-py`  
 `pip install setuptools`
+
+### Setup project
+
+Finally you need to run the following command in the directory where **setup.py** is contained  
+`python -m pip install -e .`  
+
+This allows entering an editable (hence -e) developement mode of the installment.  
+In the developement mode you should be able to edit the code and have changes available when running the scripts.  
+For example you should be able to import following from any of the files independent of the location in the project:  
+`import src.utils.timer` or `from src.utils.timer import timeit`
+
 
 
 ## Running the code
