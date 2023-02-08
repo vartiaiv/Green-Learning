@@ -12,6 +12,7 @@ The approach is to use a feedforward network using SAAB (https://github.com/davi
 - Scikit-learn (preprocessing the data at hand)
 - Scikit-image (preprocessing the data at hand)
 - Abseil-py (command line flags compatible with Tensorflow syntax)
+- Setuptools (makes project structure setup easier aka. enchances quality of life)
 
 Other dependencies are installed automatically if following the setup instructions.  
 
@@ -49,18 +50,14 @@ or
 
   If your CUDA version is <= 11.5 find a suitable command to run at https://pytorch.org/get-started/previous-versions/  
 
-**3. Install THOP: PyTorch-OpCounter**  
-`pip install thop`
-
-**4. Install Matplotlib**  
-`conda install matplotlib`
-
-**5. Install Scikit-learn and Scikit-image**  
+**3. Install the rest**  
+`pip install thop`  
+`conda install matplotlib`  
 `conda install -c conda-forge scikit-learn`  
-`conda install scikit-image`
-
-**6. Install Abseil-py**  
+`conda install scikit-image`  
 `pip install absl-py`  
+`pip install setuptools`
+
 
 ## Running the code
 ### Command line
