@@ -29,7 +29,6 @@ def window_process(samples, kernel_size, stride):
     :param kernel_size: int i.e. patch size
     :param stride: int
     :return patches: flattened, [num_samples, output_h, output_w, feature_channel*kernel_size^2]
-
     '''
     n, h, w, c = samples.shape  
     patches = view_as_windows(
@@ -40,8 +39,7 @@ def window_process(samples, kernel_size, stride):
     output_h = (h - kernel_size) // stride + 1
     output_w = (w - kernel_size) // stride + 1
 
-
-    # OOM on next line: Unable to allocate 29.8 GiB for an array with shape (50000, 10, 10, 1, 1, 5, 5, 32) and data type float64
+    # Got OOM error on next line: Unable to allocate 29.8 GiB for an array with shape (50000, 10, 10, 1, 1, 5, 5, 32) and data type float64
     patches = patches.reshape(n, output_h, output_w, c*kernel_size*kernel_size)
 
     return patches
@@ -52,7 +50,6 @@ def remove_mean(features, axis):
     Remove the dataset mean.
     :param features [num_samples,...]
     :param axis the axis to compute mean
-    
     '''
     feature_mean = np.mean(features,axis=axis,keepdims=True)
     feature_remove_mean = features-feature_mean
@@ -185,7 +182,6 @@ def multi_Saab_transform(images, labels, kernel_sizes, num_kernels, energy_perce
         sample_images, selected_labels = select_balanced_subset(images, labels, use_num_images, use_classes)
     else:
         sample_images = images
-    # sample_images=images
     num_samples = sample_images.shape[0]
     num_layers = len(kernel_sizes)
     pca_params = {}

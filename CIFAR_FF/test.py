@@ -5,18 +5,19 @@ import numpy as np
 import sklearn
 from sklearn.metrics.pairwise import euclidean_distances
 
+from utils.timer import timeit
+
+@timeit
 def main():
-    with open('llsr_weights.pkl','rb') as fr:
+    with open(r'./CIFAR_FF/llsr_weights.pkl','rb') as fr:
         weights = pickle.load(fr, encoding='latin1')
-    with open('llsr_bias.pkl','rb') as fr:
+    with open(r'./CIFAR_FF/llsr_bias.pkl','rb') as fr:
         biases = pickle.load(fr, encoding='latin1')
     # read data
-    train_images, train_labels, test_images, test_labels, class_list = data.import_data("0-9")
-    print('Training image size:', train_images.shape)
-    print('Testing_image size:', test_images.shape)
-
+    _, _, _, test_labels, _ = data.import_data("0-9")
+    
     # load feature
-    with open('feat.pkl','rb') as fr:
+    with open(r'./CIFAR_FF/feat.pkl','rb') as fr:
         feat = pickle.load(fr, encoding='latin1')
     feature = feat['testing_feature']
     feature = feature.reshape(feature.shape[0],-1)
@@ -28,7 +29,7 @@ def main():
     feature = feature/std_var
 
     num_clusters = [200, 100, 10]
-    use_classes = 10
+    # use_classes = 10
     for k in range(len(num_clusters)):
         weight = weights['%d LLSR weight'%k]
         bias = biases['%d LLSR bias'%k]
@@ -43,7 +44,7 @@ def main():
                         feature[i,j] = 0
         else:
             pred_labels = np.argmax(feature, axis=1)
-            acc_test = sklearn.metrics.accuracy_score(test_labels,pred_labels)
+            acc_test = sklearn.metrics.accuracy_score(test_labels, pred_labels)
             print('testing acc is {}'.format(acc_test))
 
 if __name__ == "__main__":

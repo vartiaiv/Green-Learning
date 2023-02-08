@@ -14,11 +14,9 @@ def to_categorical(y, num_classes):
 def main():
     # read data
     train_images, train_labels, test_images, _, class_list = data.import_data("0-9")
-    print('Training image size:', train_images.shape)
-    print('Testing_image size:', test_images.shape)
 
     # load feature
-    with open('feat.pkl','rb') as fr:
+    with open(r'./CIFAR_FF/feat.pkl','rb') as fr:
         feat = pickle.load(fr, encoding='Latin')
     feature = feat['training_feature']
     
@@ -43,10 +41,10 @@ def main():
                 idx = (train_labels == use_classes[n])
                 index = np.where(idx == True)[0]
                 feature_special = np.zeros((index.shape[0],feature.shape[1]))
-                
+
                 for i in range(index.shape[0]):
                     feature_special[i] = feature[index[i]]
-                kmeans = KMeans(n_clusters=num_clus).fit(feature_special)
+                kmeans = KMeans(n_clusters=num_clus).fit(feature_special.reshape(-1,1))  # edited
                 pred_labels = kmeans.labels_
                 
                 for i in range(feature_special.shape[0]):
@@ -93,10 +91,10 @@ def main():
             acc_train = sklearn.metrics.accuracy_score(train_labels,pred_labels)
             print('training acc is {}'.format(acc_train))
     # save data
-    with open('llsr_weights.pkl','wb') as fw:
+    with open(r'./CIFAR_FF/llsr_weights.pkl','wb') as fw:
         pickle.dump(weights, fw)
     
-    with open('llsr_bias.pkl','wb') as fw:
+    with open(r'./CIFAR_FF/llsr_bias.pkl','wb') as fw:
         pickle.dump(bias, fw)
 
 if __name__ == "__main__":

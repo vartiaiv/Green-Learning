@@ -4,15 +4,16 @@ import saab
 import pickle
 import matplotlib.pyplot as plt
 
-def getfeature():
+from utils.timer import timeit
+
+@timeit
+def main():
     # load data
-    with open('pca_params.pkl','rb') as fr:
+    with open(r'./CIFAR_FF/pca_params.pkl','rb') as fr:
         pca_params = pickle.load(fr, encoding='latin1')
 
     # read data
     train_images, _, test_images, _, _ = data.import_data("0-9")
-    print('Training image size:', train_images.shape)
-    print('Testing image size:', test_images.shape)
 
     feat = {}
     # Training
@@ -30,8 +31,8 @@ def getfeature():
 
     # save data
 
-    with open('feat.pkl','wb') as fw:
+    with open(r'./CIFAR_FF/feat.pkl','wb') as fw:
         pickle.dump(feat, fw)    
 
 if __name__ == "__main__":
-    getfeature()
+    main()
