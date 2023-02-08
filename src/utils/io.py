@@ -1,4 +1,3 @@
-# from os import getcwd
 import os
 import pickle
 

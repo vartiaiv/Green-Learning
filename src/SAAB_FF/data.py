@@ -5,9 +5,10 @@ from torchvision.transforms import Compose, ToTensor
 from torchvision.datasets import CIFAR10, MNIST
 import numpy as np
 import os
+
 from utils.padder import pad_to_size
 from utils.io import mkdir_new
-# from utils.timer import timeit
+from utils.timer import timeit
 
 dataset_func = {'cifar10': CIFAR10, 'mnist': MNIST}
 
@@ -23,10 +24,14 @@ def get_data_for_class(images, labels, cls):
 def import_data(use_classes, use_dataset):
     # data root assumes working directory to be src
     print(__file__)
+    
+    # Remove this code block if deemed useless. 
+    # It just makes sure the scripts are run from right directory
     cwd = os.getcwd().split("\\")[-1]
-    if cwd != "src":
-        raise Exception("Working directory should be src")
-    data_root = r'../datasets'
+    if cwd != 'Green Learning':
+        raise Exception("Working directory should be 'Green Learning'")
+    
+    data_root = r'./datasets'
     mkdir_new(data_root)
     T = Compose([
         # TODO Normalizations?
