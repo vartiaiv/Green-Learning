@@ -6,6 +6,7 @@ from torchvision.datasets import CIFAR10, MNIST
 import numpy as np
 import os
 from utils.padder import pad_to_size
+from utils.io import mkdir_new
 # from utils.timer import timeit
 
 dataset_func = {'cifar10': CIFAR10, 'mnist': MNIST}
@@ -20,10 +21,13 @@ def get_data_for_class(images, labels, cls):
     return images[idx], labels[idx]
 
 def import_data(use_classes, use_dataset):
+    # data root assumes working directory to be src
+    print(__file__)
+    cwd = os.getcwd().split("\\")[-1]
+    if cwd != "src":
+        raise Exception("Working directory should be src")
     data_root = r'../datasets'
-    if not os.path.exists(data_root):  # prevent accidental downloading to other directories
-        raise Exception("Data root directory missing")
-
+    mkdir_new(data_root)
     T = Compose([
         # TODO Normalizations?
         ToTensor()
