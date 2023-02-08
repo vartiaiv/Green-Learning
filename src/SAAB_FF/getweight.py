@@ -7,16 +7,19 @@ from sklearn.cluster import KMeans
 from numpy import linalg as LA
 from sklearn.metrics.pairwise import euclidean_distances
 
+from utils.timer import timeit
+
 def to_categorical(y, num_classes):
     """ 1-hot encodes a tensor. Alternative to keras.utils.to_categorical"""
     return np.eye(num_classes, dtype='uint8')[y]
 
+@timeit
 def main():
     # read data
     train_images, train_labels, test_images, _, class_list = data.import_data("0-9")
 
     # load feature
-    with open(r'./CIFAR_FF/feat.pkl','rb') as fr:
+    with open(r'./model/feat.pkl','rb') as fr:
         feat = pickle.load(fr, encoding='Latin')
     feature = feat['training_feature']
     
@@ -91,10 +94,10 @@ def main():
             acc_train = sklearn.metrics.accuracy_score(train_labels,pred_labels)
             print('training acc is {}'.format(acc_train))
     # save data
-    with open(r'./CIFAR_FF/llsr_weights.pkl','wb') as fw:
+    with open(r'./model/llsr_weights.pkl','wb') as fw:
         pickle.dump(weights, fw)
     
-    with open(r'./CIFAR_FF/llsr_bias.pkl','wb') as fw:
+    with open(r'./model/llsr_bias.pkl','wb') as fw:
         pickle.dump(bias, fw)
 
 if __name__ == "__main__":

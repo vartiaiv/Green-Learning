@@ -6,7 +6,7 @@ from torchvision.models import AlexNet
 
 from matplotlib import pyplot as plt
 
-from utils.timer import timeit  # decorator for timing functions
+from src.utils.timer import timeit  # decorator for timing functions
 
 @timeit
 def LoadData(num_batch=64):

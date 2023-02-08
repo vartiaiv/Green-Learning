@@ -9,7 +9,7 @@ from utils.timer import timeit
 @timeit
 def main():
     # load data
-    with open(r'./CIFAR_FF/pca_params.pkl','rb') as fr:
+    with open(r'./model/pca_params.pkl','rb') as fr:
         pca_params = pickle.load(fr, encoding='latin1')
 
     # read data
@@ -31,7 +31,7 @@ def main():
 
     # save data
 
-    with open(r'./CIFAR_FF/feat.pkl','wb') as fw:
+    with open(r'./model/feat.pkl','wb') as fw:
         pickle.dump(feat, fw)    
 
 if __name__ == "__main__":

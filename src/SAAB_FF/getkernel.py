@@ -50,7 +50,7 @@ def main(argv):
                          use_num_images=use_num_images,
                          use_classes=class_list)
     # save data
-    with open(r'./CIFAR_FF/pca_params.pkl','wb') as fw:
+    with open(r'./model/pca_params.pkl','wb') as fw:
         pickle.dump(pca_params, fw)
 
 if __name__ == "__main__":

@@ -9,15 +9,15 @@ from utils.timer import timeit
 
 @timeit
 def main():
-    with open(r'./CIFAR_FF/llsr_weights.pkl','rb') as fr:
+    with open(r'./model/llsr_weights.pkl','rb') as fr:
         weights = pickle.load(fr, encoding='latin1')
-    with open(r'./CIFAR_FF/llsr_bias.pkl','rb') as fr:
+    with open(r'./model/llsr_bias.pkl','rb') as fr:
         biases = pickle.load(fr, encoding='latin1')
     # read data
     _, _, _, test_labels, _ = data.import_data("0-9")
     
     # load feature
-    with open(r'./CIFAR_FF/feat.pkl','rb') as fr:
+    with open(r'./model/feat.pkl','rb') as fr:
         feat = pickle.load(fr, encoding='latin1')
     feature = feat['testing_feature']
     feature = feature.reshape(feature.shape[0],-1)
