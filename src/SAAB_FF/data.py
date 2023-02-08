@@ -6,11 +6,16 @@ from torchvision.datasets import CIFAR10, MNIST
 import numpy as np
 import os
 
-from utils.padder import pad_to_size
-from utils.io import mkdir_new
-from utils.timer import timeit
+from src.utils.padder import pad_to_size
+from src.utils.io import mkdir_new, combine_with_duplicate
+from src.utils.timer import timeit
 
+# datasets root directory and dict for choosing dataset loading function
+file_abs_path = os.path.dirname(__file__)
+data_rel_path = "Green Learning/datasets"
+data_root = combine_with_duplicate(file_abs_path, data_rel_path)
 dataset_func = {'cifar10': CIFAR10, 'mnist': MNIST}
+
 
 def get_data_for_class(images, labels, cls):
     if type(cls) == list:
@@ -21,23 +26,15 @@ def get_data_for_class(images, labels, cls):
         idx = (labels == cls)
     return images[idx], labels[idx]
 
+
 def import_data(use_classes, use_dataset):
-    # data root assumes working directory to be src
-    print(__file__)
-    
-    # Remove this code block if deemed useless. 
-    # It just makes sure the scripts are run from right directory
-    cwd = os.getcwd().split("\\")[-1]
-    if cwd != 'Green Learning':
-        raise Exception("Working directory should be 'Green Learning'")
-    
-    data_root = r'./datasets'
-    mkdir_new(data_root)
+    """ Return training and testing images, labels and a classlist """
     T = Compose([
         # TODO Normalizations?
         ToTensor()
     ])
-    DATASET = dataset_func[use_dataset]
+    mkdir_new(data_root)
+    DATASET = dataset_func[use_dataset]  # choose dataset
     train_set = DATASET(data_root, train=True, download=True, transform=T, target_transform=None)
     test_set = DATASET(data_root, train=False, download=True, transform=T, target_transform=None)
     

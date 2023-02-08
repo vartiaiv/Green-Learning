@@ -4,7 +4,7 @@ import saab
 import pickle
 import matplotlib.pyplot as plt
 
-from utils.timer import timeit
+from src.utils.timer import timeit
 
 @timeit
 def main():

@@ -1,16 +1,16 @@
 from setuptools import setup, find_packages
 
 setup(
-    name = "green_learning", 
-    packages = [
-        # "src", 
+    name = "green-learning", 
+    packages=[
+        "src", 
         "SAAB_FF",
         "utils",
-        ],
-    package_dir = {
+    ],
+    package_dir={
         "": ".",
-        # "src": "./src",
+        "src": "./src",
         "SAAB_FF": "./src/SAAB_FF",
         "utils": "./src/utils",
-        },
-    )
+    },
+)

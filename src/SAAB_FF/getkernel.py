@@ -7,7 +7,7 @@ from absl.flags import FLAGS
 from absl import logging
 import pickle
 
-from utils.timer import timeit
+from src.utils.timer import timeit
 
 # define flags
 flags.DEFINE_string('output_path', None, "The output dir to save params")

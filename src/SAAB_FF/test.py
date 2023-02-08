@@ -5,7 +5,7 @@ import numpy as np
 import sklearn
 from sklearn.metrics.pairwise import euclidean_distances
 
-from utils.timer import timeit
+from src.utils.timer import timeit
 
 @timeit
 def main():
