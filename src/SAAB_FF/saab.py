@@ -71,28 +71,17 @@ def select_balanced_subset(images, labels, use_num_images, use_classes):
     num_per_class = int(use_num_images/num_class)
     selected_images = np.zeros((use_num_images,images.shape[1],images.shape[2],images.shape[3]))
     selected_labels = np.zeros(use_num_images)
-    for i in range(num_class):
-        # images_in_class=images[labels==i]
-        idx = (labels == i)
-        index = np.where(idx == True)[0]
-        images_in_class = np.zeros((index.shape[0],images.shape[1],images.shape[2],images.shape[3]))
-        for j in range(index.shape[0]):
-            images_in_class[j] = images[index[j]]
-        selected_images[i*num_per_class:(i+1)*num_per_class] = images_in_class[:num_per_class]
-        selected_labels[i*num_per_class:(i+1)*num_per_class] = np.ones((num_per_class))*i
+    
+    for i, cid in enumerate(use_classes):  # iterate class ids
+        class_images = images[labels==cid]
+        selected_images[i*num_per_class:(i+1)*num_per_class] = class_images[:num_per_class]
+        selected_labels[i*num_per_class:(i+1)*num_per_class] = np.ones((num_per_class))*cid
 
     # Shuffle again
     shuffle_idx = np.random.permutation(num_per_class*num_class)
     selected_images = selected_images[shuffle_idx]
     selected_labels = selected_labels[shuffle_idx]
-    # For test
-    # print(selected_images.shape)
-    # print(selected_labels[0:10])
-    # plt.figure()
-    # for i in range (10):
-    # 	img=selected_images[i,:,:,0]
-    # 	plt.imshow(img)
-    # 	plt.show()
+
     return selected_images, selected_labels
 
 

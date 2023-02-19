@@ -4,16 +4,19 @@ from sklearn.model_selection import train_test_split
 from torchvision.transforms import Compose, ToTensor
 from torchvision.datasets import CIFAR10, MNIST
 import numpy as np
-import os
 
 from src.utils.padder import pad_to_size
-from src.utils.io import mkdir_new, combine_with_duplicate
 from src.utils.timer import timeit
 
-# datasets root directory and dict for choosing dataset loading function
-file_abs_path = os.path.dirname(__file__)
+import os
+from src.utils.io import mkdir_new, join_from_common
+
+# io
+here = os.path.dirname(os.path.abspath(__file__))
 data_rel_path = "Green Learning/datasets"
-data_root = combine_with_duplicate(file_abs_path, data_rel_path)
+data_root = join_from_common(here, data_rel_path)
+
+# dict for choosing dataset loading function
 dataset_func = {'cifar10': CIFAR10, 'mnist': MNIST}
 
 
@@ -33,6 +36,9 @@ def import_data(use_classes, use_dataset):
         # TODO Normalizations?
         ToTensor()
     ])
+    print(f"Importing data from: {data_root}")
+    assert(os.path.exists(data_root))
+
     mkdir_new(data_root)
     DATASET = dataset_func[use_dataset]  # choose dataset
     train_set = DATASET(data_root, train=True, download=True, transform=T, target_transform=None)

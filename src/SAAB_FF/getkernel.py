@@ -2,21 +2,16 @@ import data
 import saab
 
 from absl import app
-from absl import flags
-from absl.flags import FLAGS
 from absl import logging
-import pickle
-
+from defaultflags import FLAGS
 from src.utils.timer import timeit
 
-# define flags
-flags.DEFINE_string('output_path', None, "The output dir to save params")
-flags.DEFINE_string('use_classes', "0-9", "Supported format: '0,1,5-9'")
-flags.DEFINE_string('kernel_sizes', "5,5", "Kernels size for each stage. Format: '3,3'")
-flags.DEFINE_string('num_kernels', "4,10", "Num of kernels for each stage. Format: '4,10'")
-flags.DEFINE_float('energy_percent', None, "Energy to be preserved in each stage")
-flags.DEFINE_integer('use_num_images', 100, "Num of images used for training (-1 for all)")
-flags.DEFINE_string('use_dataset', "cifar10", "Name of a multiclass dataset, e.g. 'cifar10' or 'mnist'")
+import os
+from src.utils.io import save
+
+# io paths
+here = os.path.dirname(os.path.abspath(__file__))
+savepath = os.path.join(here, "model", "pca_params.pkl")
 
 @timeit
 def main(argv):
@@ -49,9 +44,9 @@ def main(argv):
                          energy_percent=energy_percent,
                          use_num_images=use_num_images,
                          use_classes=class_list)
+    
     # save data
-    with open(r'./model/pca_params.pkl','wb') as fw:
-        pickle.dump(pca_params, fw)
+    save(savepath, pca_params)       
 
 if __name__ == "__main__":
     try:

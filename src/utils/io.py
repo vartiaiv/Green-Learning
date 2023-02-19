@@ -1,47 +1,37 @@
 import os
 import pickle
 
-def combine_with_duplicate(root, rel_path):
-    """ Combine paths from common directory. Otherwise join normally.
-    Examples:
-    'the/path/to/project/src/file', 'project/data' combine into
-    => 'the/path/to/project/data'
-    'the/path/to/project/src/package', 'pkg1' combine into
-    => 'the/path/to/project/data'
-    """
-    root = os.path.normpath(root)  # to system path separator, an escaped backslash '\\'
-    rel_path = os.path.normpath(rel_path)
+def join_from_common(abs_path, rel_path):
+    ret = None
 
-    rs = root.split(os.sep)
-    rps = rel_path.split(os.sep)
-    popped = False
-    for v in rs:
-        if v == rps[0]:
-            rps.pop(0)
-            popped = True
-        elif popped:
+    abs_path = os.path.normpath(abs_path)
+    rel_path = os.path.normpath(rel_path)
+    abs_s: list = abs_path.split(os.path.sep)
+    rel_s: list = rel_path.split(os.path.sep)
+    
+    for i, a in enumerate(abs_s):
+        if a == rel_s[0]:  # found common name
+            abs_s = abs_s[0:i]  # keep until common name
+            ret = os.path.normpath("/".join(abs_s + rel_s))
             break
-    return "/".join(rs+rps)
+    return ret
 
 
 def mkdir_new(newpath):
     if os.path.exists(newpath):
-        print(f'Directory {newpath} exists already.')
+        # print(f'Directory {newpath} exists already.')
         return
     os.makedirs(newpath)
-    
 
-def load_pkl(dirpath, filename):
+def load(loadpath):
     # load data
-    name, ext = filename.split('.')
-    ext = "pkl" if ext == "pkl" else fr"{ext}.pkl"
-    with open(fr"{dirpath}/{name}.{ext}",'rb') as fr:
+    with open(loadpath, 'rb') as fr:
         data = pickle.load(fr, encoding='latin1')
     return data
 
-def write_pkl(dirpath, filename, data):
-    name, ext = filename.split('.')
-    mkdir_new(dirpath)
-    ext = "pkl" if ext == "pkl" else fr"{ext}.pkl"
-    with open(fr"{dirpath}/{name}.{ext}",'wb') as fw:
+def save(savepath, data):
+    # save data
+    dirpath, _ = os.path.split(savepath)
+    mkdir_new(dirpath)  # make the save directory if needed
+    with open(savepath, 'wb') as fw:
         pickle.dump(data, fw)

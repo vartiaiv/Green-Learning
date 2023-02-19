@@ -1,16 +1,26 @@
 import data
 import saab
 
-import pickle
+from absl import app
+from absl import logging
+from defaultflags import FLAGS
+
 import matplotlib.pyplot as plt
 
 from src.utils.timer import timeit
 
+import os
+from src.utils.io import save, load
+
+# io paths
+here = os.path.dirname(os.path.abspath(__file__))
+loadpath = os.path.join(here, "model", "pca_params.pkl")
+savepath = os.path.join(here, "model", "feat.pkl")
+
 @timeit
-def main():
-    # load data
-    with open(r'./model/pca_params.pkl','rb') as fr:
-        pca_params = pickle.load(fr, encoding='latin1')
+def main(argv):
+    # load pca params from getkernel
+    pca_params = load(loadpath)    
 
     # read data
     train_images, _, test_images, _, _ = data.import_data("0-9")
@@ -29,10 +39,11 @@ def main():
     print('--------Finish Feature Extraction subnet--------')
     feat['testing_feature'] = feature
 
-    # save data
-
-    with open(r'./model/feat.pkl','wb') as fw:
-        pickle.dump(feat, fw)    
+    # save features
+    save(savepath, feat) 
 
 if __name__ == "__main__":
-    main()
+    try:
+        app.run(main)
+    except SystemExit:
+        pass

@@ -1,24 +1,35 @@
 import data
 
-import pickle
+from absl import app
+from absl import flags
+from absl.flags import FLAGS
+from absl import logging
+
 import numpy as np
 import sklearn
 from sklearn.metrics.pairwise import euclidean_distances
-
 from src.utils.timer import timeit
 
+import os
+from src.utils.io import save, load
+
+# io paths
+here = os.path.dirname(os.path.abspath(__file__))
+loadpath_weights = os.path.join(here, "model", "llsr_weights.pkl")
+loadpath_bias = os.path.join(here, "model", "llsr_bias.pkl")
+loadpath_feat = os.path.join(here, "model", "feat.pkl")
+
+
 @timeit
-def main():
-    with open(r'./model/llsr_weights.pkl','rb') as fr:
-        weights = pickle.load(fr, encoding='latin1')
-    with open(r'./model/llsr_bias.pkl','rb') as fr:
-        biases = pickle.load(fr, encoding='latin1')
+def main(argv):
+    # load model parameters and features
+    weights = load(loadpath_weights)
+    biases = load(loadpath_bias)
+    feat = load(loadpath_feat)
+
     # read data
     _, _, _, test_labels, _ = data.import_data("0-9")
-    
-    # load feature
-    with open(r'./model/feat.pkl','rb') as fr:
-        feat = pickle.load(fr, encoding='latin1')
+
     feature = feat['testing_feature']
     feature = feature.reshape(feature.shape[0],-1)
     print("S4 shape:", feature.shape)

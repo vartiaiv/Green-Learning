@@ -1,6 +1,9 @@
 import data
 
-import pickle
+from absl import app
+from absl import logging
+from defaultflags import FLAGS
+
 import numpy as np
 import sklearn
 from sklearn.cluster import KMeans
@@ -9,18 +12,27 @@ from sklearn.metrics.pairwise import euclidean_distances
 
 from utils.timer import timeit
 
+import os
+from src.utils.io import save, load
+
+# io paths
+here = os.path.dirname(os.path.abspath(__file__))
+loadpath = os.path.join(here, "model", "feat.pkl")
+savepath_weights = os.path.join(here, "model", "llsr_weights.pkl")
+savepath_bias = os.path.join(here, "model", "llsr_bias.pkl")
+
 def to_categorical(y, num_classes):
     """ 1-hot encodes a tensor. Alternative to keras.utils.to_categorical"""
     return np.eye(num_classes, dtype='uint8')[y]
 
 @timeit
-def main():
-    # read data
-    train_images, train_labels, test_images, _, class_list = data.import_data("0-9")
+def main(argv):
+    # load features
+    feat = load(loadpath)
 
-    # load feature
-    with open(r'./model/feat.pkl','rb') as fr:
-        feat = pickle.load(fr, encoding='Latin')
+    # read data
+    _, train_labels, _, _, class_list = data.import_data("0-9")
+
     feature = feat['training_feature']
     
     feature = feature.reshape(feature.shape[0], -1)
@@ -33,8 +45,8 @@ def main():
 
     num_clusters = [200, 100, 10]
     use_classes = class_list
-    weights = {}
-    bias = {}
+    llsr_weights = {}
+    llsr_bias = {}
     for k in range(len(num_clusters)):
         if k != len(num_clusters)-1:
             num_clus = int(num_clusters[k]/len(use_classes))
@@ -58,8 +70,8 @@ def main():
             feature = np.concatenate((A,feature),axis=1)
             weight = np.matmul(LA.pinv(feature),labels)
             feature = np.matmul(feature,weight)
-            weights['%d LLSR weight'%k] = weight[1:weight.shape[0]]
-            bias['%d LLSR bias'%k] = weight[0].reshape(1,-1)
+            llsr_weights['%d LLSR weight'%k] = weight[1:weight.shape[0]]
+            llsr_bias['%d LLSR bias'%k] = weight[0].reshape(1,-1)
             print(k,' layer LSR weight shape:', weight.shape)
             print(k,' layer LSR output shape:', feature.shape)
 
@@ -79,26 +91,28 @@ def main():
                     if feature[i,j] < 0:
                         feature[i,j] = 0
         else:
-            # least square regression
+            # linear least square regression (llsr)
             labels = to_categorical(train_labels,10)
             A = np.ones((feature.shape[0],1))
             feature = np.concatenate((A,feature),axis=1)
             weight = np.matmul(LA.pinv(feature),labels)
             feature = np.matmul(feature,weight)
-            weights['%d LLSR weight'%k] = weight[1:weight.shape[0]]
-            bias['%d LLSR bias'%k] = weight[0].reshape(1,-1)
+            llsr_weights['%d LLSR weight'%k] = weight[1:weight.shape[0]]
+            llsr_bias['%d LLSR bias'%k] = weight[0].reshape(1,-1)
             print(k,' layer LSR weight shape:', weight.shape)
             print(k,' layer LSR output shape:', feature.shape)
             
             pred_labels = np.argmax(feature, axis=1)
             acc_train = sklearn.metrics.accuracy_score(train_labels,pred_labels)
             print('training acc is {}'.format(acc_train))
-    # save data
-    with open(r'./model/llsr_weights.pkl','wb') as fw:
-        pickle.dump(weights, fw)
     
-    with open(r'./model/llsr_bias.pkl','wb') as fw:
-        pickle.dump(bias, fw)
+    # save data
+    save(savepath_weights, llsr_weights)
+    save(savepath_bias, llsr_bias)
+
 
 if __name__ == "__main__":
-    main()
+    try:
+        app.run(main)
+    except SystemExit:
+        pass
