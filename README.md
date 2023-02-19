@@ -13,6 +13,7 @@ The approach is to use a feedforward network using SAAB (https://github.com/davi
 - Scikit-image (preprocessing the data at hand)
 - Abseil-py (command line flags compatible with Tensorflow syntax)
 - Setuptools (makes project structure setup easier aka. enchances quality of life)
+- Psutil (can be used to measure RAM peak and avg for example)
 
 Other dependencies are installed automatically if following the setup instructions.  
 
@@ -58,7 +59,8 @@ or
 `conda install -c conda-forge scikit-learn`  
 `conda install scikit-image`  
 `pip install absl-py`  
-`pip install setuptools`
+`pip install setuptools`  
+`pip install psutil`  
 
 ### Setup project
 
