@@ -27,10 +27,7 @@ def main(argv):
     feat = load(loadpath_feat)
 
     # read data
-    use_classes = FLAGS.use_classes
-    use_dataset = FLAGS.use_dataset
-    use_portion = FLAGS.use_portion
-    _, _, _, test_labels, _ = data.import_data(use_classes, use_dataset, use_portion)
+    _, _, _, test_labels, _ = data.import_data()
 
     feature = feat['testing_feature']
     feature = feature.reshape(feature.shape[0],-1)

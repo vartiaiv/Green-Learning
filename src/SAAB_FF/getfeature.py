@@ -17,16 +17,14 @@ here = os.path.dirname(os.path.abspath(__file__))
 loadpath = os.path.join(here, "model", "pca_params.pkl")
 savepath = os.path.join(here, "model", "feat.pkl")
 
+
 @timeit
 def main(argv):
     # load pca params obtained from getkernel
     pca_params = load(loadpath)    
 
     # read data
-    use_classes = FLAGS.use_classes
-    use_dataset = FLAGS.use_dataset
-    use_portion = FLAGS.use_portion
-    train_images, _, test_images, _, _ = data.import_data(use_classes, use_dataset, use_portion)
+    train_images, _, test_images, _, _ = data.import_data()
 
     feat = {}
     # Features for training

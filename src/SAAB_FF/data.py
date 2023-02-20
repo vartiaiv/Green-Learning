@@ -1,3 +1,6 @@
+""" Create new data cache when run.
+Call import_data when cache doesn't need to be updated!
+"""
 import saab
 
 from sklearn.model_selection import train_test_split
@@ -5,15 +8,18 @@ from torchvision.transforms import Compose, ToTensor
 from torchvision.datasets import CIFAR10, MNIST
 import numpy as np
 
-from src.utils.padder import pad_to_size
+from absl import app
+from absl import logging
+from defaultflags import FLAGS
 
 import os
-from src.utils.io import mkdir_new, join_from_common
+from src.utils.padder import pad_to_size
+from src.utils.io import join_path_common
 
-# io paths
+# datasets root folder
 here = os.path.dirname(os.path.abspath(__file__))
 data_rel_path = "Green Learning/datasets"
-data_root = join_from_common(here, data_rel_path)
+data_root = join_path_common(here, data_rel_path)
 
 def get_data_for_class(images, labels, cls):
     if type(cls) == list:
@@ -25,26 +31,28 @@ def get_data_for_class(images, labels, cls):
     return images[idx], labels[idx]
 
 
-def import_data(use_classes, use_dataset, use_portion
-    ):
+def import_data():
     """ Return training and testing images, labels and a classlist """
-    T = Compose([
-        # TODO Normalizations?
-        ToTensor()
-    ])
+    
+    use_dataset = FLAGS.use_dataset
+    use_classes = FLAGS.use_classes
+    use_portion = FLAGS.use_portion
+
     print(f"Importing data from: {data_root}")
     # it's good practice to create the datasets directory before downloading
     assert(os.path.exists(data_root))  # makes sure that the datasets directory exists
-    # mkdir_new(data_root)
 
     class_list = [0,1,2,3,4,5,6,7,8,9]  # default
     if use_classes != "0-9":
         class_list = saab.parse_list_string(use_classes)
-    # print(class_list)
-    
+
     # choose corresponding torchvision.datasets function
-    dataset_func = {'cifar10': CIFAR10, 'mnist': MNIST}
-    DATASET = dataset_func[use_dataset]  
+    dataset_dict = {'cifar10': CIFAR10, 'mnist': MNIST}  
+    DATASET = dataset_dict[use_dataset]
+    T = Compose([
+        # TODO Normalizations?
+        ToTensor()
+    ])
     train_set = DATASET(data_root, train=True, download=True, transform=T, target_transform=None)
     test_set = DATASET(data_root, train=False, download=True, transform=T, target_transform=None)
     
@@ -81,14 +89,14 @@ def import_data(use_classes, use_dataset, use_portion
     train_images, train_labels = get_data_for_class(train_images, train_labels, class_list)
     test_images, test_labels = get_data_for_class(test_images, test_labels, class_list)
 
-    return train_images, train_labels, test_images, test_labels, class_list
+    return train_images, train_labels, test_images, test_labels, class_list    
 
 
-# NOTE debug only: hardcoded input for testing import_data(), nothing else
-def main():
-    for dataset_name in ['mnist', 'cifar10']:
-        print(f"testing import_data('0-9', '{dataset_name}')")
-        import_data('0-9', dataset_name, 0.1)
+def main(argv):
+    import_data()
 
 if __name__ == "__main__":
-    main()
+    try:
+        app.run(main)
+    except SystemExit:
+        pass

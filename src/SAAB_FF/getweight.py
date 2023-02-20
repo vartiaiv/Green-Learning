@@ -35,10 +35,7 @@ def main(argv):
     feat = load(loadpath)
 
     # read data
-    use_classes = FLAGS.use_classes  # string form
-    use_dataset = FLAGS.use_dataset
-    use_portion = FLAGS.use_portion
-    _, train_labels, _, _, class_list = data.import_data(use_classes, use_dataset, use_portion)
+    _, train_labels, _, _, class_list = data.import_data()
 
     feature = feat['training_feature']
     

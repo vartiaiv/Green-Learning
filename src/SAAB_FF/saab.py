@@ -86,13 +86,12 @@ def select_balanced_subset(images, labels, use_num_images, class_list):
     selected_images = selected_images[shuffle_idx]
     selected_labels = selected_labels[shuffle_idx]
 
-    # debug
-    counts = [sum(1 for k in selected_labels[selected_labels == c]) for c in class_list]
-    print(f"Class distribution: {counts}")
-
-    # # Show images for test
+    # NOTE for debug
+    # counts = [sum(1 for k in selected_labels[selected_labels == c]) for c in class_list]
+    # print(f"Class distribution: {counts}")
     # print(selected_images.shape)
     # print(selected_labels[0:10])
+
     # plt.figure()
     # for i in range (10):
     #     img=selected_images[i,:,:,0]
@@ -167,7 +166,7 @@ def find_kernels_pca(sample_patches, num_kernels, energy_percent):
     return kernels, mean
 
 
-def multi_Saab_transform(images, labels, kernel_sizes, num_kernels, energy_percent, use_num_images, use_classes):
+def multi_Saab_transform(images, labels, kernel_sizes, num_kernels, energy_percent, use_num_images, class_list):
     '''
     Do the PCA "training".
     :param images: [num_images, height, width, channel]
@@ -185,7 +184,7 @@ def multi_Saab_transform(images, labels, kernel_sizes, num_kernels, energy_perce
 
     num_total_images = images.shape[0]
     if use_num_images < num_total_images and use_num_images > 0:
-        sample_images, selected_labels = select_balanced_subset(images, labels, use_num_images, use_classes)
+        sample_images, selected_labels = select_balanced_subset(images, labels, use_num_images, class_list)
     else:
         sample_images = images
     num_samples = sample_images.shape[0]

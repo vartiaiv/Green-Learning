@@ -1,7 +1,7 @@
 import os
 import pickle
 
-def join_from_common(abs_path, rel_path):
+def join_path_common(abs_path, rel_path):
     ret = None
 
     abs_path = os.path.normpath(abs_path)
