@@ -57,7 +57,7 @@ def remove_mean(features, axis):
     return feature_remove_mean, feature_mean
 
 
-def select_balanced_subset(images, labels, use_num_images, use_classes):
+def select_balanced_subset(images, labels, use_num_images, class_list):
     '''
     select equal number of images from each classes
     '''
@@ -67,12 +67,16 @@ def select_balanced_subset(images, labels, use_num_images, use_classes):
     images = images[shuffle_idx]
     labels = labels[shuffle_idx]
 
-    num_class = len(use_classes)
+    num_class = len(class_list)
     num_per_class = int(use_num_images/num_class)
+    smallest_class_size = min(images[labels == cid].shape[0] for cid in class_list)
+    if num_per_class > smallest_class_size:  # smallest class limits num_per_class
+        num_per_class = smallest_class_size
+
     selected_images = np.zeros((use_num_images,images.shape[1],images.shape[2],images.shape[3]))
-    selected_labels = np.zeros(use_num_images)
+    selected_labels = np.zeros(use_num_images, dtype=np.int8)  # to get integer labels, important!
     
-    for i, cid in enumerate(use_classes):  # iterate class ids
+    for i, cid in enumerate(class_list):  # iterate class ids
         class_images = images[labels==cid]
         selected_images[i*num_per_class:(i+1)*num_per_class] = class_images[:num_per_class]
         selected_labels[i*num_per_class:(i+1)*num_per_class] = np.ones((num_per_class))*cid
@@ -81,6 +85,19 @@ def select_balanced_subset(images, labels, use_num_images, use_classes):
     shuffle_idx = np.random.permutation(num_per_class*num_class)
     selected_images = selected_images[shuffle_idx]
     selected_labels = selected_labels[shuffle_idx]
+
+    # debug
+    counts = [sum(1 for k in selected_labels[selected_labels == c]) for c in class_list]
+    print(f"Class distribution: {counts}")
+
+    # # Show images for test
+    # print(selected_images.shape)
+    # print(selected_labels[0:10])
+    # plt.figure()
+    # for i in range (10):
+    #     img=selected_images[i,:,:,0]
+    #     plt.imshow(img)
+    #     plt.show()
 
     return selected_images, selected_labels
 

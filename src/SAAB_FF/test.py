@@ -1,9 +1,8 @@
 import data
 
 from absl import app
-from absl import flags
-from absl.flags import FLAGS
 from absl import logging
+from defaultflags import FLAGS
 
 import numpy as np
 import sklearn
@@ -28,7 +27,10 @@ def main(argv):
     feat = load(loadpath_feat)
 
     # read data
-    _, _, _, test_labels, _ = data.import_data("0-9")
+    use_classes = FLAGS.use_classes
+    use_dataset = FLAGS.use_dataset
+    use_portion = FLAGS.use_portion
+    _, _, _, test_labels, _ = data.import_data(use_classes, use_dataset, use_portion)
 
     feature = feat['testing_feature']
     feature = feature.reshape(feature.shape[0],-1)
@@ -59,4 +61,7 @@ def main(argv):
             print('testing acc is {}'.format(acc_test))
 
 if __name__ == "__main__":
-    main()
+    try:
+        app.run(main)
+    except SystemExit:
+        pass

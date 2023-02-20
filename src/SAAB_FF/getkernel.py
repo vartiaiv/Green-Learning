@@ -18,8 +18,8 @@ def main(argv):
     # read data
     use_classes = FLAGS.use_classes
     use_dataset = FLAGS.use_dataset
-
-    train_images, train_labels, _, _, class_list = data.import_data(use_classes, use_dataset)
+    use_portion = FLAGS.use_portion
+    train_images, train_labels, _, _, class_list = data.import_data(use_classes, use_dataset, use_portion)
 
     kernel_sizes = saab.parse_list_string(FLAGS.kernel_sizes)
     if FLAGS.num_kernels:
@@ -28,7 +28,6 @@ def main(argv):
         num_kernels = None
     energy_percent = FLAGS.energy_percent
     use_num_images = FLAGS.use_num_images
-    use_dataset = FLAGS.use_dataset
 
     print('Parameters:')
     print('use_classes:', use_classes, '=>', class_list)

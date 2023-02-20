@@ -19,20 +19,24 @@ savepath = os.path.join(here, "model", "feat.pkl")
 
 @timeit
 def main(argv):
-    # load pca params from getkernel
+    # load pca params obtained from getkernel
     pca_params = load(loadpath)    
 
     # read data
-    train_images, _, test_images, _, _ = data.import_data("0-9")
+    use_classes = FLAGS.use_classes
+    use_dataset = FLAGS.use_dataset
+    use_portion = FLAGS.use_portion
+    train_images, _, test_images, _, _ = data.import_data(use_classes, use_dataset, use_portion)
 
     feat = {}
-    # Training
+    # Features for training
     print('--------Training--------')
     feature = saab.initialize(train_images, pca_params) 
     print("S4 shape:", feature.shape)
     print('--------Finish Feature Extraction subnet--------')
     feat['training_feature']=feature
 
+    # Features for testing
     print('--------Testing--------')
     feature = saab.initialize(test_images, pca_params) 
     print("S4 shape:", feature.shape)
