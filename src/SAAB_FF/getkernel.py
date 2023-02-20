@@ -14,12 +14,9 @@ here = os.path.dirname(os.path.abspath(__file__))
 savepath = os.path.join(here, "model", "pca_params.pkl")
 
 @timeit
-def main(argv):
+def main(argv):   
     # read data
-    use_classes = FLAGS.use_classes
-    use_dataset = FLAGS.use_dataset
-    use_portion = FLAGS.use_portion
-    train_images, train_labels, _, _, class_list = data.import_data(use_classes, use_dataset, use_portion)
+    train_images, train_labels, _, _, class_list = data.import_data()
 
     kernel_sizes = saab.parse_list_string(FLAGS.kernel_sizes)
     if FLAGS.num_kernels:
@@ -28,23 +25,24 @@ def main(argv):
         num_kernels = None
     energy_percent = FLAGS.energy_percent
     use_num_images = FLAGS.use_num_images
+    if use_num_images > len(train_images):
+        use_num_images = len(train_images)
 
-    print('Parameters:')
-    print('use_classes:', use_classes, '=>', class_list)
+    print('Saab parameters:')
     print('kernel_sizes:', kernel_sizes)
     print('number_kernels:', num_kernels)
     print('energy_percent:', energy_percent)
     print('use_num_images:', use_num_images)
-    print('use_dataset:', use_dataset)
+    print('class_list:', class_list)
 
     pca_params = saab.multi_Saab_transform(train_images, train_labels,
                          kernel_sizes=kernel_sizes,
                          num_kernels=num_kernels,
                          energy_percent=energy_percent,
                          use_num_images=use_num_images,
-                         use_classes=class_list)
+                         class_list=class_list)
     
-    # save data
+    # save params
     save(savepath, pca_params)       
 
 if __name__ == "__main__":
