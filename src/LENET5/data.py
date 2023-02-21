@@ -4,13 +4,13 @@ import torch
 
 def get_data_mnist(batch_size: int) -> tuple:
     # Transform the data by normaizing and transfering to tensor
-    transform = transforms.Compose([transforms.Normalize(0, 1), transforms.ToTensor()])
+    transform = transforms.Compose([transforms.ToTensor(), transforms.Resize([32, 32]), transforms.Normalize(0, 1)])
 
     # Load the data
     train_dataset = torchvision.datasets.MNIST(
         root='data/mnist', train=True, transform=transform, download=True)
     test_dataset = torchvision.datasets.MNIST(
-        root='data/mnist', train=False, transform=transform(), download=True)
+        root='data/mnist', train=False, transform=transform, download=True)
     
     # Split the train dataset into train and validation
     train_size = int(0.8 * len(train_dataset))
@@ -30,7 +30,7 @@ def get_data_mnist(batch_size: int) -> tuple:
 
 def get_data_cifar10(batch_size: int) -> tuple:
     # Transform the data by normaizing and transfering to tensor
-    transform = transforms.Compose([transforms.Normalize(0, 1), transforms.ToTensor()])
+    transform = transforms.Compose([transforms.ToTensor(), transforms.Resize([32, 32]), transforms.Normalize(0, 1)])
 
     # Load the data
     train_dataset = torchvision.datasets.CIFAR10(

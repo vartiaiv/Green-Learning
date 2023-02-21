@@ -5,7 +5,7 @@ from typing import Union, Tuple, Optional
 from pytorch_model_summary import summary
 
 
-class LeNet5_1D(Module):
+class LeNet5_3D(Module):
     def __init__(self,
                 conv_1_output_dim: int = 32,
                 conv_2_output_dim: int = 64,
@@ -101,7 +101,7 @@ def main():
     linear_1_output_dim = 100
     num_classes = 10
 
-    model = LeNet5_1D()
+    model = LeNet5_3D()
 
     print(summary(model, torch.rand(4,3,32,32).float()))
 

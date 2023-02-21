@@ -3,7 +3,7 @@ import numpy as np
 from torch.nn import Module
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-from torch.utils import clip_grad_value_
+from torch.nn.utils import clip_grad_value_
 from sklearn.metrics import accuracy_score
 
 
@@ -12,7 +12,7 @@ def forward_backward_pass(lenet_model: Module,
                         dataloader: DataLoader, 
                         device: str, 
                         do_grad_clip: bool = False
-                        ) -> tuple(Module, np.float64, np.float64):
+                        ) -> tuple:
 
     iteration_loss = []
 
@@ -35,9 +35,8 @@ def forward_backward_pass(lenet_model: Module,
         images, y_true = batch
 
         # Give them to the appropriate device & reshape the audio.
-        images = images.float().unsqueeze(dim=1).to(device)
-        y_hat = y_hat.to(device)
-        label = label.to(device)
+        images = images.to(device)
+        y_true = y_true.to(device)
 
         # Get the prediction of the model
         y_hat = lenet_model(images)
