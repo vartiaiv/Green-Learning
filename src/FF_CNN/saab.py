@@ -87,11 +87,6 @@ def select_balanced_subset(images, labels, use_num_images, class_list):
     selected_labels = selected_labels[shuffle_idx]
 
     # NOTE for debug
-    # counts = [sum(1 for k in selected_labels[selected_labels == c]) for c in class_list]
-    # print(f"Class distribution: {counts}")
-    # print(selected_images.shape)
-    # print(selected_labels[0:10])
-
     # plt.figure()
     # for i in range (10):
     #     img=selected_images[i,:,:,0]

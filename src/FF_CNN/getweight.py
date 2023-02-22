@@ -13,17 +13,10 @@ from sklearn.cluster import KMeans
 from numpy import linalg as LA
 from sklearn.metrics.pairwise import euclidean_distances
 
-from src.utils.timer import timeit
+from utils.perf import timeit
+from src.utils.io import save_params, load_params
 
-
-from src.utils.io import save, load
-
-# io paths
 here = os.path.dirname(os.path.abspath(__file__))
-loadpath = os.path.join(here, "model", "feat.pkl")
-savepath_weights = os.path.join(here, "model", "llsr_weights.pkl")
-savepath_bias = os.path.join(here, "model", "llsr_bias.pkl")
-
 
 def to_categorical(y, num_classes):
     # 1-hot encode a tensor similar to keras.utils.to_categorical"""
@@ -31,8 +24,10 @@ def to_categorical(y, num_classes):
 
 @timeit
 def main(argv):
+    modelpath = os.path.join(here, f"{FLAGS.use_dataset}_model")
+
     # load features
-    feat = load(loadpath)
+    feat = load_params(modelpath, "feat.pkl")
 
     # read data
     _, train_labels, _, _, class_list = data.import_data()
@@ -50,7 +45,7 @@ def main(argv):
 
     num_clusters = [200, 100, 10]
     llsr_weights = {}
-    llsr_bias = {}
+    llsr_biases = {}
     for k in range(len(num_clusters)):
         if k != len(num_clusters)-1:
             num_clus = int(num_clusters[k]/len(class_list))
@@ -73,7 +68,7 @@ def main(argv):
             weight = np.matmul(LA.pinv(feature),labels)
             feature = np.matmul(feature,weight)
             llsr_weights['%d LLSR weight'%k] = weight[1:weight.shape[0]]
-            llsr_bias['%d LLSR bias'%k] = weight[0].reshape(1,-1)
+            llsr_biases['%d LLSR bias'%k] = weight[0].reshape(1,-1)
             print(k,' layer LSR weight shape:', weight.shape)
             print(k,' layer LSR output shape:', feature.shape)
 
@@ -100,17 +95,16 @@ def main(argv):
             weight = np.matmul(LA.pinv(feature),labels)
             feature = np.matmul(feature,weight)
             llsr_weights['%d LLSR weight'%k] = weight[1:weight.shape[0]]
-            llsr_bias['%d LLSR bias'%k] = weight[0].reshape(1,-1)
+            llsr_biases['%d LLSR bias'%k] = weight[0].reshape(1,-1)
             print(k,' layer LSR weight shape:', weight.shape)
             print(k,' layer LSR output shape:', feature.shape)
             
             pred_labels = np.argmax(feature, axis=1)
             acc_train = sklearn.metrics.accuracy_score(train_labels,pred_labels)
             print('training acc is {}'.format(acc_train))
-    
-    # save data
-    save(savepath_weights, llsr_weights)
-    save(savepath_bias, llsr_bias)
+
+    save_params(modelpath, "llsr_weights.pkl", llsr_weights)
+    save_params(modelpath, "llsr_bias.pkl", llsr_biases)
 
 
 if __name__ == "__main__":

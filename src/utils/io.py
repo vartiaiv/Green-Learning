@@ -35,3 +35,11 @@ def save(savepath, data):
     mkdir_new(dirpath)  # make the save directory if needed
     with open(savepath, 'wb') as fw:
         pickle.dump(data, fw)
+
+def load_params(modelpath, dataname):
+    loadpath = os.path.join(modelpath, dataname)
+    return load(loadpath)
+
+def save_params(modelpath, dataname, params):
+    savepath = os.path.join(modelpath, dataname)
+    save(savepath, params)

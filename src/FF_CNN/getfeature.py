@@ -7,21 +7,19 @@ from defaultflags import FLAGS
 
 import matplotlib.pyplot as plt
 
-from src.utils.timer import timeit
+from utils.perf import timeit
 
 import os
-from src.utils.io import save, load
+from src.utils.io import save_params, load_params
 
-# io paths
 here = os.path.dirname(os.path.abspath(__file__))
-loadpath = os.path.join(here, "model", "pca_params.pkl")
-savepath = os.path.join(here, "model", "feat.pkl")
-
 
 @timeit
 def main(argv):
+    modelpath = os.path.join(here, f"{FLAGS.use_dataset}_model")
+
     # load pca params obtained from getkernel
-    pca_params = load(loadpath)    
+    pca_params = load_params(modelpath, "pca_params.pkl")
 
     # read data
     train_images, _, test_images, _, _ = data.import_data()
@@ -41,8 +39,8 @@ def main(argv):
     print('--------Finish Feature Extraction subnet--------')
     feat['testing_feature'] = feature
 
-    # save features
-    save(savepath, feat) 
+    save_params(modelpath, "feat.pkl", feat)
+
 
 if __name__ == "__main__":
     try:

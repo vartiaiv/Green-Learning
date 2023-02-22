@@ -4,17 +4,18 @@ import saab
 from absl import app
 from absl import logging
 from defaultflags import FLAGS
-from src.utils.timer import timeit
+from utils.perf import timeit
 
 import os
-from src.utils.io import save
+from src.utils.io import save_params
 
-# io paths
-here = os.path.dirname(os.path.abspath(__file__))
-savepath = os.path.join(here, "model", "pca_params.pkl")
 
 @timeit
 def main(argv):   
+    # io paths
+    here = os.path.dirname(os.path.abspath(__file__))
+    modelpath = os.path.join(here, f"{FLAGS.use_dataset}_model")
+
     # read data
     train_images, train_labels, _, _, class_list = data.import_data()
 
@@ -41,9 +42,9 @@ def main(argv):
                          energy_percent=energy_percent,
                          use_num_images=use_num_images,
                          class_list=class_list)
-    
-    # save params
-    save(savepath, pca_params)       
+
+    save_params(modelpath, "pca_params.pkl", pca_params)
+
 
 if __name__ == "__main__":
     try:
