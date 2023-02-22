@@ -7,17 +7,16 @@ from pytorch_model_summary import summary
 
 class LeNet5_1D(Module):
     def __init__(self,
-                conv_1_output_dim: int,
-                conv_2_output_dim: int,
-                conv_3_output_dim: int,
-                conv_1_kernel_size: Union[int, Tuple[int, int]],
-                conv_2_kernel_size: Union[int, Tuple[int, int]],
-                conv_3_kernel_size: Union[int, Tuple[int, int]],
-                pooling_1_kernel_size: Union[int, Tuple[int, int]],
-                pooling_2_kernel_size: Union[int, Tuple[int, int]],
-                linear_1_output_dim: int,
-                num_classes: int,
-                dropout: Optional[float] = 0.25,
+                conv_1_output_dim: int = 6,
+                conv_2_output_dim: int = 16,
+                conv_3_output_dim: int = 120,
+                conv_1_kernel_size: Union[int, Tuple[int, int]] = 5,
+                conv_2_kernel_size: Union[int, Tuple[int, int]] = 5,
+                conv_3_kernel_size: Union[int, Tuple[int, int]] = 5,
+                pooling_1_kernel_size: Union[int, Tuple[int, int]] = 2,
+                pooling_2_kernel_size: Union[int, Tuple[int, int]] = 2,
+                linear_1_output_dim: int = 84,
+                num_classes: int = 10,
                 conv_1_stride: Optional[Union[int, Tuple[int, int]]] = 1,
                 conv_2_stride: Optional[Union[int, Tuple[int, int]]] = 1,
                 conv_3_stride: Optional[Union[int, Tuple[int, int]]] = 1,
@@ -40,7 +39,6 @@ class LeNet5_1D(Module):
             BatchNorm2d(num_features=conv_1_output_dim),
             MaxPool2d(kernel_size=pooling_1_kernel_size,
                       stride=pooling_1_stride),
-            Dropout2d(dropout)
         )
 
         self.block_2 = Sequential(
@@ -53,7 +51,6 @@ class LeNet5_1D(Module):
             BatchNorm2d(num_features=conv_2_output_dim),
             MaxPool2d(kernel_size=pooling_2_kernel_size,
                       stride=pooling_2_stride),
-            Dropout2d(dropout)
         )
 
         self.block_3 = Sequential(
@@ -101,18 +98,7 @@ def main():
     linear_1_output_dim = 84
     num_classes = 10
 
-    model = LeNet5_1D(
-        conv_1_output_dim=conv_1_output_dim,
-        conv_2_output_dim=conv_2_output_dim,
-        conv_3_output_dim=conv_3_output_dim,
-        conv_1_kernel_size=conv_1_kernel_size,
-        conv_2_kernel_size=conv_2_kernel_size,
-        conv_3_kernel_size=conv_3_kernel_size,
-        pooling_1_kernel_size=pooling_1_kernel_size,
-        pooling_2_kernel_size=pooling_2_kernel_size,
-        linear_1_output_dim=linear_1_output_dim,
-        num_classes=num_classes
-    )
+    model = LeNet5_1D()
 
     print(summary(model, torch.rand(4,1,32,32).float()))
 
