@@ -3,6 +3,7 @@ from torch.nn import Module, Conv2d, MaxPool2d, Linear, ReLU, Softmax, Sequentia
 from torch import Tensor
 from typing import Union, Tuple, Optional
 from pytorch_model_summary import summary
+from torchscan import summary as torchscan_summary
 
 
 class LeNet5_3D(Module):
@@ -104,6 +105,7 @@ def main():
     model = LeNet5_3D()
 
     print(summary(model, torch.rand(4,3,32,32).float()))
+    torchscan_summary(model, (3,32,32), receptive_field=True)
 
 
 if __name__ == "__main__":

@@ -8,9 +8,9 @@ def get_data_mnist(batch_size: int) -> tuple:
 
     # Load the data
     train_dataset = torchvision.datasets.MNIST(
-        root='data/mnist', train=True, transform=transform, download=True)
+        root='datasets/mnist', train=True, transform=transform, download=True)
     test_dataset = torchvision.datasets.MNIST(
-        root='data/mnist', train=False, transform=transform, download=True)
+        root='datasets/mnist', train=False, transform=transform, download=True)
     
     # Split the train dataset into train and validation
     train_size = int(0.8 * len(train_dataset))
@@ -34,9 +34,9 @@ def get_data_cifar10(batch_size: int) -> tuple:
 
     # Load the data
     train_dataset = torchvision.datasets.CIFAR10(
-        root='data/cifar10', train=True, transform=transform, download=True)
+        root='datasets/cifar10', train=True, transform=transform, download=True)
     test_dataset = torchvision.datasets.CIFAR10(
-        root='data/cifar10', train=False, transform=transform, download=True)
+        root='datasets/cifar10', train=False, transform=transform, download=True)
     
     # Split the train dataset into train and validation
     train_size = int(0.8 * len(train_dataset))
