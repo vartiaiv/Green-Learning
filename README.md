@@ -14,6 +14,7 @@ The approach is to use a feedforward network using SAAB (https://github.com/davi
 - Abseil-py (command line flags compatible with Tensorflow syntax)
 - Setuptools (makes project structure setup easier aka. enchances quality of life)
 - Psutil (can be used to measure RAM peak and avg for example)
+- Pytorch-model-summary (keras like model summary for PyTorch)
 
 Other dependencies are installed automatically if following the setup instructions.  
 
@@ -61,6 +62,7 @@ or
 `pip install absl-py`  
 `pip install setuptools`  
 `pip install psutil`  
+`pip install pytorch-model-summary`
 
 ### Setup project
 

@@ -7,24 +7,22 @@ from defaultflags import FLAGS
 import numpy as np
 import sklearn
 from sklearn.metrics.pairwise import euclidean_distances
-from src.utils.timer import timeit
+from utils.perf import timeit
 
 import os
-from src.utils.io import save, load
+from src.utils.io import save, load, save_params, load_params
 
 # io paths
 here = os.path.dirname(os.path.abspath(__file__))
-loadpath_weights = os.path.join(here, "model", "llsr_weights.pkl")
-loadpath_bias = os.path.join(here, "model", "llsr_bias.pkl")
-loadpath_feat = os.path.join(here, "model", "feat.pkl")
-
 
 @timeit
 def main(argv):
     # load model parameters and features
-    weights = load(loadpath_weights)
-    biases = load(loadpath_bias)
-    feat = load(loadpath_feat)
+    modelpath = os.path.join(here, f"{FLAGS.use_dataset}_model")
+
+    weights = load_params(modelpath, "llsr_weights.pkl")
+    biases = load_params(modelpath, "llsr_biases.pkl")
+    feat = load_params(modelpath, "feat.pkl")
 
     # read data
     _, _, _, test_labels, _ = data.import_data()

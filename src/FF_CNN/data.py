@@ -16,10 +16,11 @@ import os
 from src.utils.padder import pad_to_size
 from src.utils.io import join_path_common
 
-# datasets root folder
-here = os.path.dirname(os.path.abspath(__file__))
-data_rel_path = "Green Learning/datasets"
-data_root = join_path_common(here, data_rel_path)
+
+here = os.path.dirname(os.path.abspath(__file__))  # this directory
+data_rel_path = "Green Learning/datasets"  # data location w.r.t. top level
+data_root = join_path_common(here, data_rel_path)  # path to 'datasets'
+
 
 def get_data_for_class(images, labels, cls):
     if type(cls) == list:
@@ -76,6 +77,12 @@ def import_data():
     num_test_images = round(use_portion * len(test_images))
     train_images, train_labels = saab.select_balanced_subset(train_images, train_labels, num_train_images, class_list)
     test_images, test_labels = saab.select_balanced_subset(train_images, train_labels, num_test_images, class_list)
+
+    # NOTE for debug
+    # counts = [sum(1 for k in selected_labels[selected_labels == c]) for c in class_list]
+    # print(f"Class distribution: {counts}")
+    # print(selected_images.shape)
+    # print(selected_labels[0:10])
 
     # scale image values
     train_images = train_images / 255.

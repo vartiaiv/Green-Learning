@@ -2,6 +2,8 @@
 import numpy as np
 import math
 import torch
+from utils.perf import mem_profile
+
 
 from thop import profile  # used to calculate MACs (Roughly MAC = 0.5 * FLOP)
 # MACs = multiply–accumulate operations
@@ -99,7 +101,7 @@ def tensorsTest():
 
     print(f'Result: y = {a.item()} + {b.item()} x + {c.item()} x^2 + {d.item()} x^3')
 
-
+@mem_profile
 def tensorAutogradTest():
     # Create Tensors to hold input and outputs. 
     # Given device=<device> they are created directly on <device> whereas 
@@ -121,7 +123,7 @@ def tensorAutogradTest():
         torch.nn.Flatten(0, 1)
     ).to(device)
 
-    macs, params = profile(model, inputs=(xx, ))
+    macs, params = mem_profile(model, inputs=(xx, ))
 
     # The nn package also contains definitions of popular loss functions; in this
     # case we will use Mean Squared Error (MSE) as our loss function.
