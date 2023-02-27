@@ -1,6 +1,7 @@
 import os
 import pickle
 
+
 def join_path_common(abs_path, rel_path):
     ret = None
 
@@ -23,11 +24,13 @@ def mkdir_new(newpath):
         return
     os.makedirs(newpath)
 
+
 def load(loadpath):
     # load data
     with open(loadpath, 'rb') as fr:
         data = pickle.load(fr, encoding='latin1')
     return data
+
 
 def save(savepath, data):
     # save data
@@ -36,9 +39,11 @@ def save(savepath, data):
     with open(savepath, 'wb') as fw:
         pickle.dump(data, fw)
 
+
 def load_params(modelpath, dataname):
     loadpath = os.path.join(modelpath, dataname)
     return load(loadpath)
+
 
 def save_params(modelpath, dataname, params):
     savepath = os.path.join(modelpath, dataname)

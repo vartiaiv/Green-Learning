@@ -1,36 +1,39 @@
 import os
-os.environ["OMP_NUM_THREADS"] = '1'  # NOTE: do this BEFORE importing numpy and KMeans
-
-import data
-
 from absl import app
+from params_ffcnn import FLAGS
 from absl import logging
-from defaultflags import FLAGS
+
+# NOTE Avoid memory leak with KMeans on windows with MKL, when less chunks than available threads
+# NOTE do this BEFORE importing numpy and KMeans or any other module using them
+os.environ["OMP_NUM_THREADS"] = '2'  
+
+import data_ffcnn
+from params_ffcnn import MODELS_ROOT
+from utils.io import save_params, load_params
+from utils.perf import timeit, mem_profile
 
 import numpy as np
-import sklearn
 from sklearn.cluster import KMeans
+import sklearn
 from numpy import linalg as LA
-from sklearn.metrics.pairwise import euclidean_distances
 
-from utils.perf import timeit
-from src.utils.io import save_params, load_params
-
-here = os.path.dirname(os.path.abspath(__file__))
 
 def to_categorical(y, num_classes):
     # 1-hot encode a tensor similar to keras.utils.to_categorical"""
     return np.eye(num_classes, dtype='uint8')[y]
 
+
 @timeit
+@mem_profile
 def main(argv):
-    modelpath = os.path.join(here, f"{FLAGS.use_dataset}_model")
+    # io paths
+    modelpath = os.path.join(MODELS_ROOT, f"ffcnn_{FLAGS.use_dataset}")
 
     # load features
     feat = load_params(modelpath, "feat.pkl")
 
     # read data
-    _, train_labels, _, _, class_list = data.import_data()
+    _, train_labels, _, _, class_list = data_ffcnn.import_data()
 
     feature = feat['training_feature']
     
@@ -104,7 +107,7 @@ def main(argv):
             print('training acc is {}'.format(acc_train))
 
     save_params(modelpath, "llsr_weights.pkl", llsr_weights)
-    save_params(modelpath, "llsr_bias.pkl", llsr_biases)
+    save_params(modelpath, "llsr_biases.pkl", llsr_biases)
 
 
 if __name__ == "__main__":

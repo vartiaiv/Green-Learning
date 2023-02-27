@@ -1,28 +1,26 @@
-import data
-import saab
-
-from absl import app
-from absl import logging
-from defaultflags import FLAGS
-
-import matplotlib.pyplot as plt
-
-from utils.perf import timeit
-
 import os
-from src.utils.io import save_params, load_params
+from absl import app
+from params_ffcnn import FLAGS
+from absl import logging
 
-here = os.path.dirname(os.path.abspath(__file__))
+import saab
+import data_ffcnn as data_ffcnn
+from params_ffcnn import MODELS_ROOT
+from utils.io import save_params, load_params
+from utils.perf import timeit, mem_profile
+
 
 @timeit
+@mem_profile
 def main(argv):
-    modelpath = os.path.join(here, f"{FLAGS.use_dataset}_model")
+    # io paths
+    modelpath = os.path.join(MODELS_ROOT, f"ffcnn_{FLAGS.use_dataset}")
 
     # load pca params obtained from getkernel
     pca_params = load_params(modelpath, "pca_params.pkl")
 
     # read data
-    train_images, _, test_images, _, _ = data.import_data()
+    train_images, _, test_images, _, _ = data_ffcnn.import_data()
 
     feat = {}
     # Features for training

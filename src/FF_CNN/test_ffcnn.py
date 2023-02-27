@@ -1,31 +1,31 @@
-import data
+import data_ffcnn as data_ffcnn
 
 from absl import app
+from params_ffcnn import FLAGS
 from absl import logging
-from defaultflags import FLAGS
+
+import os
+from params_ffcnn import MODELS_ROOT
+from utils.io import load_params
+from utils.perf import timeit, mem_profile
 
 import numpy as np
 import sklearn
-from sklearn.metrics.pairwise import euclidean_distances
-from utils.perf import timeit
 
-import os
-from src.utils.io import save, load, save_params, load_params
-
-# io paths
-here = os.path.dirname(os.path.abspath(__file__))
 
 @timeit
+@mem_profile
 def main(argv):
-    # load model parameters and features
-    modelpath = os.path.join(here, f"{FLAGS.use_dataset}_model")
+    # io paths
+    modelpath = os.path.join(MODELS_ROOT, f"ffcnn_{FLAGS.use_dataset}")
 
+    # load model parameters and features
     weights = load_params(modelpath, "llsr_weights.pkl")
     biases = load_params(modelpath, "llsr_biases.pkl")
     feat = load_params(modelpath, "feat.pkl")
 
     # read data
-    _, _, _, test_labels, _ = data.import_data()
+    _, _, _, test_labels, _ = data_ffcnn.import_data()
 
     feature = feat['testing_feature']
     feature = feature.reshape(feature.shape[0],-1)
@@ -54,6 +54,7 @@ def main(argv):
             pred_labels = np.argmax(feature, axis=1)
             acc_test = sklearn.metrics.accuracy_score(test_labels, pred_labels)
             print('testing acc is {}'.format(acc_test))
+
 
 if __name__ == "__main__":
     try:

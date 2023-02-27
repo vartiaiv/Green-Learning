@@ -1,23 +1,23 @@
-import data
-import saab
-
-from absl import app
-from absl import logging
-from defaultflags import FLAGS
-from utils.perf import timeit
-
 import os
-from src.utils.io import save_params
+from absl import app
+from params_ffcnn import FLAGS
+from absl import logging
+
+import saab
+import data_ffcnn as data_ffcnn
+from params_ffcnn import MODELS_ROOT
+from utils.io import save_params
+from utils.perf import timeit, mem_profile
 
 
 @timeit
+@mem_profile
 def main(argv):   
     # io paths
-    here = os.path.dirname(os.path.abspath(__file__))
-    modelpath = os.path.join(here, f"{FLAGS.use_dataset}_model")
+    modelpath = os.path.join(MODELS_ROOT, f"ffcnn_{FLAGS.use_dataset}")
 
     # read data
-    train_images, train_labels, _, _, class_list = data.import_data()
+    train_images, train_labels, _, _, class_list = data_ffcnn.import_data()
 
     kernel_sizes = saab.parse_list_string(FLAGS.kernel_sizes)
     if FLAGS.num_kernels:

@@ -57,10 +57,13 @@ def remove_mean(features, axis):
     return feature_remove_mean, feature_mean
 
 
-def select_balanced_subset(images, labels, use_num_images, class_list):
+def select_balanced_subset(images, labels, use_num_images, class_list, shuffle_seed=None):
     '''
     select equal number of images from each classes
     '''
+    if shuffle_seed:  # for reproducibility
+        np.random.seed(shuffle_seed)  
+    
     # Shuffle
     num_total = images.shape[0]
     shuffle_idx = np.random.permutation(num_total)
@@ -285,6 +288,3 @@ def initialize(sample_images, pca_params):
         print('Sample images shape:', sample_images.shape)
     
     return sample_images
-
-
-

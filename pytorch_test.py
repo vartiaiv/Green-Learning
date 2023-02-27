@@ -2,12 +2,14 @@
 import numpy as np
 import math
 import torch
-from utils.perf import mem_profile
+
+# for testing FF_CNN perf utilities
+from src.FF_CNN.utils.perf import mem_profile, timeit
 
 
-from thop import profile  # used to calculate MACs (Roughly MAC = 0.5 * FLOP)
 # MACs = multiply–accumulate operations
-# FLOPs = floating-point operations per second
+# FLOPs = floating-point operations
+from thop import profile  # used to calculate MACs (Roughly 1 MAC = 0.5 * FLOP)
 from thop import clever_format
 
 
@@ -101,12 +103,13 @@ def tensorsTest():
 
     print(f'Result: y = {a.item()} + {b.item()} x + {c.item()} x^2 + {d.item()} x^3')
 
+@timeit
 @mem_profile
 def tensorAutogradTest():
     # Create Tensors to hold input and outputs. 
     # Given device=<device> they are created directly on <device> whereas 
     # x.to(<device>) would move them to the <device>
-    LEN = 2000
+    LEN = 100
     x = torch.linspace(-math.pi, math.pi, LEN, device=device)
     y = torch.sin(x)
 
@@ -123,7 +126,7 @@ def tensorAutogradTest():
         torch.nn.Flatten(0, 1)
     ).to(device)
 
-    macs, params = mem_profile(model, inputs=(xx, ))
+    macs, params = profile(model, inputs=(xx, ))
 
     # The nn package also contains definitions of popular loss functions; in this
     # case we will use Mean Squared Error (MSE) as our loss function.
@@ -139,8 +142,8 @@ def tensorAutogradTest():
         # values of y, and the loss function returns a Tensor containing the
         # loss.
         loss = loss_fn(y_pred, y)
-        LEN_5_percent = int(round(LEN*0.05))
-        if t % (LEN_5_percent) == LEN_5_percent-1:
+        progress_percentage = int(round(LEN*0.05))  # 5%
+        if t % progress_percentage == progress_percentage-1:
             print(t, loss.item())
 
         # Zero the gradients before running the backward pass.
