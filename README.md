@@ -15,6 +15,7 @@ The approach is to use a feedforward network using SAAB (https://github.com/davi
 - Setuptools (makes project structure setup easier aka. enchances quality of life)
 - Psutil (can be used to measure RAM peak and avg for example)
 - Pytorch-model-summary (keras like model summary for PyTorch)
+- torchscan (also used for model summary)
 
 Other dependencies are installed automatically if following the setup instructions.  
 
@@ -63,6 +64,7 @@ or
 `pip install setuptools`  
 `pip install psutil`  
 `pip install pytorch-model-summary`
+`pip install torchscan`
 
 ### Setup project
 
@@ -78,7 +80,7 @@ For example you should be able to import following from any of the files indepen
 
 ## Running the code
 ### Command line
-You can use command line to run the python scripts. Make sure to **have the correct conda environment activated**!  
+You can use command line to run the python scripts. Make sure to have the correct conda environment activated.  
 
 ### VSCode with Python extension
 If you want to run and debug the code I recommend VSCode with its Python extension.  
