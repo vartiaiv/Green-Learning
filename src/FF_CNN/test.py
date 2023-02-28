@@ -1,4 +1,5 @@
 import data_ffcnn as data_ffcnn
+import saab
 
 from absl import app
 from params_ffcnn import FLAGS
@@ -23,7 +24,7 @@ def main(argv):
     feat = load_params(modelpath, "feat.pkl")
 
     # read data
-    _, _, _, test_labels, _ = data_ffcnn.import_data()
+    _, _, _, test_labels, class_list = data_ffcnn.import_data()
 
     features = feat['testing_feature']
     print("S4 shape:", features.shape)
@@ -32,59 +33,31 @@ def main(argv):
     # feature normalization
     std_var = (np.std(features, axis=0)).reshape(1,-1)
     features = features/std_var
-    use_dataset = FLAGS.use_dataset
-    
-    if use_dataset == 'mnist':
-        test_mnist(llsr_weights, llsr_biases, features, test_labels)
-    elif use_dataset == 'cifar10':
-        test_cifar10(llsr_weights, llsr_biases, features, test_labels)
+    num_classes = len(class_list)
+    num_clusters = saab.parse_list_string(FLAGS.num_clusters)
 
-
-# test network trained on MNIST
-def test_mnist(weights, biases, features, test_labels):
-    fixed_num_classes = 10  # NOTE use_classes is fixed to use all
-    num_clusters = [120, 84, 10]
+    # Start testing
     for k in range(len(num_clusters)):
-        # least square regression
-        weight = weights['%d LLSR weight'%k]
-        bias = biases['%d LLSR bias'%k]
-        features = np.matmul(features, weight)
-        features = features+bias
+        weight = llsr_weights['%d LLSR weight'%k]
+        bias = llsr_biases['%d LLSR bias'%k]
+        features = np.matmul(features,weight)+bias
         print(k,' layer LSR weight shape:', weight.shape)
         print(k,' layer LSR bias shape:', bias.shape)
         print(k,' layer LSR output shape:', features.shape)
-        
-        if k != len(num_clusters)-1:
-            pred_labels = np.argmax(features, axis=1)
-            num_clas = np.zeros((num_clusters[k], fixed_num_classes))
+
+        # --------------- When using MNIST -------------------------------
+        if FLAGS.use_dataset == 'mnist':
+            pred_labels=np.argmax(features, axis=1)
+            num_clas=np.zeros((num_clusters[k], num_classes))
             for i in range(num_clusters[k]):
-                for t in range(fixed_num_classes):
+                for t in range(num_classes):
                     for j in range(features.shape[0]):
-                        if pred_labels[j] == i and test_labels[j] == t:
-                            num_clas[i,t] += 1
-            acc_test = np.sum(np.amax(num_clas, axis=1))/features.shape[0]
+                        if pred_labels[j]==i and test_labels[j]==t:
+                            num_clas[i,t]+=1
+            acc_test=np.sum(np.amax(num_clas, axis=1))/features.shape[0]
             print(k,' layer LSR testing acc is {}'.format(acc_test))
+        # ----------------------------------------------------------------
 
-            # Relu
-            for i in range(features.shape[0]):
-                for j in range(features.shape[1]):
-                    if features[i,j] < 0:
-                        features[i,j] = 0
-        else:
-            pred_labels = np.argmax(features, axis=1)
-            acc_test = accuracy_score(test_labels,pred_labels)
-            print('testing acc is {}'.format(acc_test))
-
-
-# test network trained on CIFAR-10
-def test_cifar10(weights, biases, features, test_labels):
-    num_clusters = [200, 100, 10]
-    for k in range(len(num_clusters)):
-        weight = weights['%d LLSR weight'%k]
-        bias = biases['%d LLSR bias'%k]
-        features = np.matmul(features,weight)+bias
-        print(k,' layer LSR weight shape:', weight.shape)
-        print(k,' layer LSR output shape:', features.shape)
         if k != len(num_clusters)-1:
             # Relu
             for i in range(features.shape[0]):
@@ -94,7 +67,7 @@ def test_cifar10(weights, biases, features, test_labels):
         else:
             pred_labels = np.argmax(features, axis=1)
             acc_test = accuracy_score(test_labels, pred_labels)
-            print('testing acc is {}'.format(acc_test))
+            print('testing acc is {}'.format(acc_test))        
 
 
 if __name__ == "__main__":
