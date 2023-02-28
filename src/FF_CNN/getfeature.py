@@ -23,17 +23,18 @@ def main(argv):
     feat = {}
     # Features for training
     print('--------Training--------')
-    feature = saab.initialize(train_images, pca_params) 
-    print("S4 shape:", feature.shape)
+    train_feat = saab.initialize(train_images, pca_params) 
+    print("S4 shape:", train_feat.shape)
     print('--------Finish Feature Extraction subnet--------')
-    feat['training_feature']=feature
+    feat['training_feature'] = train_feat
 
     # Features for testing
     print('--------Testing--------')
-    feature = saab.initialize(test_images, pca_params) 
-    print("S4 shape:", feature.shape)
+    test_feat = saab.initialize(test_images, pca_params) 
+    test_feat=test_feat.reshape(test_feat.shape[0],-1)
+    print("S4 shape:", test_feat.shape)
     print('--------Finish Feature Extraction subnet--------')
-    feat['testing_feature'] = feature
+    feat['testing_feature'] = test_feat
 
     save_params(modelpath, "feat.pkl", feat)
 
