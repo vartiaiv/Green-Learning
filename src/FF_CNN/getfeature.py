@@ -5,16 +5,14 @@ from absl import logging
 
 import saab
 import data_ffcnn as data_ffcnn
-from params_ffcnn import MODELS_ROOT
 from utils.io import save_params, load_params
-from utils.perf import timeit, mem_profile
+from utils.perf import timeit
 
 
 @timeit
-@mem_profile
 def main(argv):
     # io paths
-    modelpath = os.path.join(MODELS_ROOT, f"ffcnn_{FLAGS.use_dataset}")
+    modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")
 
     # load pca params obtained from getkernel
     pca_params = load_params(modelpath, "pca_params.pkl")

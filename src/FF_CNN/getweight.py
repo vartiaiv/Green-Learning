@@ -8,9 +8,8 @@ from absl import logging
 os.environ["OMP_NUM_THREADS"] = '2'  
 
 import data_ffcnn
-from params_ffcnn import MODELS_ROOT
 from utils.io import save_params, load_params
-from utils.perf import timeit, mem_profile
+from utils.perf import timeit
 
 import numpy as np
 from sklearn.cluster import KMeans
@@ -24,10 +23,9 @@ def to_categorical(y, num_classes):
 
 
 @timeit
-@mem_profile
 def main(argv):
     # io paths
-    modelpath = os.path.join(MODELS_ROOT, f"ffcnn_{FLAGS.use_dataset}")
+    modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")
 
     # load features
     feat = load_params(modelpath, "feat.pkl")

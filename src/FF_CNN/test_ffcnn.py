@@ -5,19 +5,17 @@ from params_ffcnn import FLAGS
 from absl import logging
 
 import os
-from params_ffcnn import MODELS_ROOT
 from utils.io import load_params
-from utils.perf import timeit, mem_profile
+from utils.perf import timeit
 
 import numpy as np
-import sklearn
+from sklearn.metrics import accuracy_score
 
 
 @timeit
-@mem_profile
 def main(argv):
     # io paths
-    modelpath = os.path.join(MODELS_ROOT, f"ffcnn_{FLAGS.use_dataset}")
+    modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")
 
     # load model parameters and features
     weights = load_params(modelpath, "llsr_weights.pkl")
@@ -37,7 +35,6 @@ def main(argv):
     feature = feature/std_var
 
     num_clusters = [200, 100, 10]
-    # use_classes = 10
     for k in range(len(num_clusters)):
         weight = weights['%d LLSR weight'%k]
         bias = biases['%d LLSR bias'%k]
@@ -52,7 +49,7 @@ def main(argv):
                         feature[i,j] = 0
         else:
             pred_labels = np.argmax(feature, axis=1)
-            acc_test = sklearn.metrics.accuracy_score(test_labels, pred_labels)
+            acc_test = accuracy_score(test_labels, pred_labels)
             print('testing acc is {}'.format(acc_test))
 
 
