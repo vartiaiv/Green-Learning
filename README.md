@@ -4,18 +4,19 @@ The goal is to experiment with neural networks and find an efficient (low comput
 The approach is to use a feedforward network using SAAB (https://github.com/davidsonic/Interpretable_CNNs_via_Feedforward_Design) and compare it with a traditional CNN such as AlexNet.
 
 **The packages installed:**  
-- PyTorch (CPU or GPU)  
-- TorchAudio (audio processing and I/O)
-- TorchVision (image processing and I/O)
-- THOP
-- Matplotlib
-- Scikit-learn (preprocessing the data at hand)
-- Scikit-image (preprocessing the data at hand)
-- Abseil-py (command line flags compatible with Tensorflow syntax)
-- Setuptools (makes project structure setup easier aka. enchances quality of life)
-- Psutil (can be used to measure RAM peak and avg for example)
-- Pytorch-model-summary (keras like model summary for PyTorch)
-- torchscan (also used for model summary)
+- pytorch (CPU or GPU)  
+- torchaudio (audio processing)
+- torchvision (image processing)
+- pytorch-model-summary (keras like model summary for PyTorch)
+- torchscan (model summary)
+- scikit-image (preprocessing)
+- scikit-learn
+- abseil-py (CL flags)
+- matplotlib
+- memory-profiler (good for peak memory)
+- psutil (backend for memory-profiler)
+- setuptools
+- thop
 
 Other dependencies are installed automatically if following the setup instructions.  
 
@@ -65,6 +66,7 @@ or
 `pip install psutil`  
 `pip install pytorch-model-summary`
 `pip install torchscan`
+`pip install -U memory-profiler`
 
 ### Setup project
 

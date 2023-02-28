@@ -5,3 +5,5 @@ datasets/
 *.egg*
 build/
 models/
+*.dat
+*.png
