@@ -1,13 +1,13 @@
 import os
+# NOTE Comment the next line and see if any warnings come from KMeans
+# If needed, do this BEFORE importing numpy and KMeans or any other module using them
+# Avoid memory leak with KMeans on Windows with MKL, when less chunks than available threads
+os.environ["OMP_NUM_THREADS"] = '1'  
+
 from absl import app
 from params_ffcnn import FLAGS
 from absl import logging
 import saab
-
-# NOTE Comment the next line out if no warning comes from KMeans
-# Avoid memory leak with KMeans on Windows with MKL, when less chunks than available threads
-# If needed, do this BEFORE importing numpy and KMeans or any other module using them
-os.environ["OMP_NUM_THREADS"] = '2'  
 
 import data_ffcnn
 from utils.io import save_params, load_params
@@ -62,7 +62,7 @@ def main(argv):
     for k in range(len(num_clusters)):
         if k != len(num_clusters)-1:
             # this is only difference between mnist and cifar10 versions
-            labels = \
+            labels, pred_labels = \
                 helper(k, train_feat, train_labels, num_classes, num_clusters)  
 
             # least square regression
@@ -75,12 +75,12 @@ def main(argv):
             print(k,' layer LSR weight shape:', weight.shape)
             print(k,' layer LSR output shape:', train_feat.shape)
 
-            prediction = np.argmax(train_feat, axis=1)
+            pred_labels = np.argmax(train_feat, axis=1)
             num_clas = np.zeros((num_clusters[k], num_classes))
             for i in range(num_clusters[k]):
                 for t in range(num_classes):
                     for j in range(train_feat.shape[0]):
-                        if prediction[j] == i and train_labels[j] == t:
+                        if pred_labels[j] == i and train_labels[j] == t:
                             num_clas[i,t] += 1
             
             # extra print
@@ -106,8 +106,8 @@ def main(argv):
             print(k,' layer LSR output shape:', train_feat.shape)
             
             # predictions
-            prediction = np.argmax(train_feat, axis=1)
-            acc_train = accuracy_score(train_labels, prediction)
+            pred_labels = np.argmax(train_feat, axis=1)
+            acc_train = accuracy_score(train_labels, pred_labels)
             print('training acc is {}'.format(acc_train))
 
     save_params(modelpath, "llsr_weights.pkl", llsr_weights)
@@ -157,7 +157,7 @@ def mnist_helper(k, train_feat, train_labels, num_classes, num_clusters):
                 distance[j] = euclidean_distances(train_feat[i].reshape(1,-1), centroid[cluster_special[j]].reshape(1,-1))
             labels[i, cluster_special[np.argmin(distance)]] = 1
     
-    return labels
+    return labels, pred_labels
 
 
 def cifar10_helper(k, feature, train_labels, num_classes, num_clusters):
@@ -176,7 +176,7 @@ def cifar10_helper(k, feature, train_labels, num_classes, num_clusters):
         for i in range(feature_special.shape[0]):
             labels[index[i], pred_labels[i] + cid*num_class_clusters] = 1
 
-    return labels, 
+    return labels, pred_labels
 
 if __name__ == "__main__":
     try:

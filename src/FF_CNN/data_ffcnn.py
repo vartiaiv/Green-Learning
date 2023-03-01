@@ -55,6 +55,8 @@ def import_data():
         seed = 0  # for reproducible subset selection!
         train_images, train_labels = saab.select_balanced_subset(train_images, train_labels, num_train_images, class_list, shuffle_seed=seed)
         test_images, test_labels = saab.select_balanced_subset(train_images, train_labels, num_test_images, class_list, shuffle_seed=seed)
+    else:
+        raise("bad portion: needs to be strictly between 0 and 1.0")
 
     train_images, train_labels = get_data_for_class(train_images, train_labels, class_list)
     test_images, test_labels = get_data_for_class(test_images, test_labels, class_list)
