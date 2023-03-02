@@ -18,7 +18,7 @@ def test_lenet(dataset_name: str):
         model = LeNet5_3D()
         
     # Load the model
-    model.load_state_dict(torch.load(f'models/lenet5/lenet5_{dataset_name}.pt'))
+    model.load_state_dict(torch.load(f'src/LENET5/models/lenet5_{dataset_name}.pt'))
     
     # Move the model to the appropriate device
     model = model.to(DEVICE)

@@ -42,7 +42,7 @@ def train_lenet(dataset_name: str) -> Module:
         model, val_loss, val_acc = forward_backward_pass(
             model, None, val_loader, DEVICE)
         
-        print(f'Epoch: {epoch:02} | Epoch Train Loss: {train_loss:.3f} | Epoch Train Acc: {train_acc * 100:.2f}%')
+        print(f'Epoch: {epoch:02} | Epoch Train Loss: {train_loss:.3f} | Epoch Train Acc: {train_acc * 100:.2f}% | Epoch Val. Loss: {val_loss:.3f} | Epoch Val. Acc: {val_acc * 100:.2f}%')
         
         # Check early stopping condition
         if val_loss < best_val_loss:
@@ -54,6 +54,6 @@ def train_lenet(dataset_name: str) -> Module:
             break
 
     # Save the model
-    torch.save(best_model.state_dict(), f'models/lenet5/lenet5_{dataset_name}.pt')
+    torch.save(best_model.state_dict(), f'src/LENET5/models/lenet5_{dataset_name}.pt')
 
     return model

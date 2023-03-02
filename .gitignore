@@ -4,4 +4,3 @@ datasets/
 *.pkl
 *.egg*
 build/
-models/
