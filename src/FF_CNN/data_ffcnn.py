@@ -9,7 +9,6 @@ from torchvision.datasets import CIFAR10, MNIST
 from sklearn.model_selection import train_test_split
 
 import saab
-from params_ffcnn import DATASETS_ROOT
 
 
 def import_data():
@@ -17,7 +16,7 @@ def import_data():
     # choose corresponding torchvision.datasets function
     use_dataset = FLAGS.use_dataset
     datasets_dict = {'cifar10': CIFAR10, 'mnist': MNIST}  
-    data_root = os.path.join(DATASETS_ROOT, use_dataset)
+    data_root = os.path.join(FLAGS.datasets_root, use_dataset)
     print(f"Importing data from: {data_root}")
 
     # selected classes
@@ -34,11 +33,6 @@ def import_data():
     train_set = DATASET(data_root, train=True, download=True, transform=T, target_transform=None)
     test_set = DATASET(data_root, train=False, download=True, transform=T, target_transform=None)
     
-    # selected subset (mainly for debug)
-    use_portion = FLAGS.use_portion
-    num_train_images = round(use_portion * len(train_set))  # subset size
-    num_test_images = round(use_portion * len(test_set))  # subset size
-
     # extract images as tensors
     train_images = train_set.data    # train_images = train_set.data
     test_images = test_set.data      # test_images = test_set.data
@@ -53,16 +47,22 @@ def import_data():
     train_images = preprocess_images(train_images, (32, 32))
     test_images = preprocess_images(test_images, (32, 32))
 
-    # select balanced subsets (classes uniform distributed)
-    seed = 0  # for reproducible subset selection!
-    train_images, train_labels = saab.select_balanced_subset(train_images, train_labels, num_train_images, class_list, shuffle_seed=seed)
-    test_images, test_labels = saab.select_balanced_subset(train_images, train_labels, num_test_images, class_list, shuffle_seed=seed)
-
-    print('Training image size:', train_images.shape)  
-    print('Testing_image size:', test_images.shape)
+    if 0 < FLAGS.use_portion < 1.0:
+        use_portion = FLAGS.use_portion
+        num_train_images = round(use_portion * len(train_set))  # subset size
+        num_test_images = round(use_portion * len(test_set))  # subset size
+        # select balanced subsets (classes uniform distributed)
+        seed = 0  # for reproducible subset selection!
+        train_images, train_labels = saab.select_balanced_subset(train_images, train_labels, num_train_images, class_list, shuffle_seed=seed)
+        test_images, test_labels = saab.select_balanced_subset(train_images, train_labels, num_test_images, class_list, shuffle_seed=seed)
+    else:
+        raise("bad portion: needs to be strictly between 0 and 1.0")
 
     train_images, train_labels = get_data_for_class(train_images, train_labels, class_list)
     test_images, test_labels = get_data_for_class(test_images, test_labels, class_list)
+    
+    print('Training image size:', train_images.shape)  
+    print('Testing_image size:', test_images.shape)
 
     return train_images, train_labels, test_images, test_labels, class_list    
 

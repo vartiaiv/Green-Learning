@@ -5,16 +5,14 @@ from absl import logging
 
 import saab
 import data_ffcnn as data_ffcnn
-from params_ffcnn import MODELS_ROOT
 from utils.io import save_params
-from utils.perf import timeit, mem_profile
+from utils.perf import timeit
 
 
 @timeit
-@mem_profile
 def main(argv):   
     # io paths
-    modelpath = os.path.join(MODELS_ROOT, f"ffcnn_{FLAGS.use_dataset}")
+    modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")
 
     # read data
     train_images, train_labels, _, _, class_list = data_ffcnn.import_data()
@@ -33,7 +31,7 @@ def main(argv):
     print('kernel_sizes:', kernel_sizes)
     print('number_kernels:', num_kernels)
     print('energy_percent:', energy_percent)
-    print('use_num_images:', use_num_images)
+    print('use_num_images:', use_num_images if use_num_images > 0 else 'all')
     print('class_list:', class_list)
 
     pca_params = saab.multi_Saab_transform(train_images, train_labels,
@@ -46,7 +44,7 @@ def main(argv):
     save_params(modelpath, "pca_params.pkl", pca_params)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":      
     try:
         app.run(main)
     except SystemExit:

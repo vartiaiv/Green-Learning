@@ -4,3 +4,12 @@ datasets/
 *.pkl
 *.egg*
 build/
+build/
+models/
+*.dat
+*.png
+*.txt
+
+# I have original codes locally for debug -Ville
+**/MNIST_FF
+**/CIFAR_FF
