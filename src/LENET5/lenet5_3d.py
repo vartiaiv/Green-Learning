@@ -10,23 +10,21 @@ class LeNet5_3D(Module):
     def __init__(self,
                 conv_1_output_dim: int = 32,
                 conv_2_output_dim: int = 64,
-                conv_3_output_dim: int = 200,
                 conv_1_kernel_size: Union[int, Tuple[int, int]] = 5,
                 conv_2_kernel_size: Union[int, Tuple[int, int]] = 5,
-                conv_3_kernel_size: Union[int, Tuple[int, int]] = 5,
                 pooling_1_kernel_size: Union[int, Tuple[int, int]] = 2,
                 pooling_2_kernel_size: Union[int, Tuple[int, int]] = 2,
-                linear_1_output_dim: int = 100,
                 num_classes: int = 10,
                 dropout: Optional[float] = 0.25,
                 conv_1_stride: Optional[Union[int, Tuple[int, int]]] = 1,
                 conv_2_stride: Optional[Union[int, Tuple[int, int]]] = 1,
-                conv_3_stride: Optional[Union[int, Tuple[int, int]]] = 1,
                 conv_1_padding: Optional[Union[int, Tuple[int, int]]] = 0,
                 conv_2_padding: Optional[Union[int, Tuple[int, int]]] = 0,
-                conv_3_padding: Optional[Union[int, Tuple[int, int]]] = 0,
                 pooling_1_stride: Optional[Union[int, Tuple[int, int]]] = 2,
                 pooling_2_stride: Optional[Union[int, Tuple[int, int]]] = 2,
+                flatten_size = 1600,
+                linear_1_output_dim: int = 200,
+                linear_2_output_dim: int = 100,
     ) -> None:
 
         super().__init__()
@@ -57,32 +55,31 @@ class LeNet5_3D(Module):
             Dropout2d(dropout)
         )
 
-        self.block_3 = Sequential(
-            Conv2d(in_channels=conv_2_output_dim,
-                   out_channels=conv_3_output_dim,
-                   kernel_size=conv_3_kernel_size,
-                   stride=conv_3_stride,
-                   padding=conv_3_padding),
-            ReLU()
-        )
-        
-        self.conv_3_output_dim = conv_3_output_dim
+        self.flatten_size = flatten_size
 
         self.fc1 = Sequential(
-            Linear(in_features=conv_3_output_dim, out_features=linear_1_output_dim), 
+            Linear(in_features=flatten_size, out_features=linear_1_output_dim), 
             ReLU()
         )
 
-        self.fc2 = Linear(in_features=linear_1_output_dim, out_features=num_classes)
+        self.fc2 = Sequential(
+            Linear(in_features=linear_1_output_dim, out_features=linear_2_output_dim),
+            ReLU()
+        )
+
+        self.fc3 = Linear(in_features=linear_2_output_dim, out_features=num_classes)
 
     def forward(self, X: Tensor) -> Tensor:
         y = self.block_1(X)
         y = self.block_2(y)
-        y = self.block_3(y)
+        # y = self.block_3(y)
 
-        y = y.view(-1, self.conv_3_output_dim)
+        print(y.shape)
+        y = y.flatten(start_dim=1)
+        print(y.shape)
         y = self.fc1(y)
         y = self.fc2(y)
+        y = self.fc3(y)
 
         return y
 
@@ -104,7 +101,6 @@ def main():
 
     model = LeNet5_3D()
 
-    print(summary(model, torch.rand(4,3,32,32).float()))
     torchscan_summary(model, (3,32,32), receptive_field=True)
 
 
