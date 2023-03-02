@@ -5,8 +5,8 @@ DATASETS_ROOT = r".\datasets"  # shared between both networks
 MODELS_ROOT = r".\models\ffcnn"  # separate folder for each network
 USE_CLASSES = '0-9'  # classes to be used, 0-9 is for all 10 classes to be used (like MNIST)
 KERNEL_SIZES = '5,5'  # convolutional kernel size this was used in the original code
-USE_DATASET = 'cifar10'  # the dataset to be used, MNIST by default, other option is 'cifar10'
-USE_PORTION = 0.05  # 1.0 use entire dataset; size subset as a percentage of original dataset. 
+USE_DATASET = 'mnist'  # the dataset to be used, MNIST by default, other option is 'cifar10'
+USE_PORTION = 0.1  # 1.0 use entire dataset; size subset as a percentage of original dataset. 
 # number of conv kernels: originall "5,15" for mnist and "31,63" for cifar10
 NUM_KERNELS = '5,15' if USE_DATASET == 'mnist' else '31,63'
 # fully connected layer dims: originally 120,84,10 for mnist and "200,100,10" for cifar10
