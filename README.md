@@ -16,7 +16,6 @@ The approach is to use a feedforward network using SAAB (https://github.com/davi
 - memory-profiler (good for peak memory)
 - psutil (backend for memory-profiler)
 - setuptools
-- thop
 
 Other dependencies are installed automatically if following the setup instructions.  
 
@@ -57,7 +56,6 @@ or
   If your CUDA version is <= 11.5 find a suitable command to run at https://pytorch.org/get-started/previous-versions/  
 
 **3. Install the rest**  
-`pip install thop`  
 `conda install matplotlib`  
 `conda install -c conda-forge scikit-learn`  
 `conda install scikit-image`  
@@ -68,41 +66,8 @@ or
 `pip install torchscan`
 `pip install -U memory-profiler`
 
-### Setup project
-
-Finally you need to run the following command in the directory where **setup.py** is contained  
-`python -m pip install -e .`  
-
-This allows entering an editable (hence -e) developement mode of the installment.  
-In the developement mode you should be able to edit the code and have changes available when running the scripts.  
-For example you should be able to import following from any of the files independent of the location in the project:  
-`import src.utils.timer` or `from src.utils.timer import timeit`
-
-
 
 ## Running the code
 ### Command line
 You can use command line to run the python scripts. Make sure to have the correct conda environment activated.  
 
-### VSCode with Python extension
-If you want to run and debug the code I recommend VSCode with its Python extension.  
-VSCode is a lightweight customizable code editor that can be made to behave like a fully fledged IDE.  
-
-After installing Python on VSCode you may also need to select the correct Python interpreter for the project.
-Use the one from the **conda environment you created in step 1** of the setup so that the packages are available.  
-You can select the interpreter with **Ctrl+Shift+P** and by typing "python select interpreter" in the search box.  
-
-Now try opening (or creating) a Python script in the editor and run it by pressing F5.  
-If there isn't a run configuration in `.vscode\launch.json` yet, it needs to be configured now. 
-The default configuration runs the active file in editor. 
-
-If you want instead a specific run configuration, go to Run->Open configurations (or open `.vscode\launch.json`).  
-There, if you change text `"program": "${file}",` into `"program": "${workspaceFolder}\\script.py",`,
-pressing F5 now runs `script.py` in the workspace folder regardless of the active file.
-
-## Troubleshooting
-- In VSCode if you cannot find the Python interpreter you wanted, you need to add the following (or similar) location to the PATH:  
-  `C:\Users\<yourname>\anaconda3\Scripts`  
-  (this is the location by default when installing Anaconda on Windows)
-- If you want to setup the VSCode run configurations from a clean slate, just delete the file `.vscode\launch.json`  
-  and go to Run->Add configuration (Python file).
