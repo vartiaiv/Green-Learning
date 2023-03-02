@@ -13,3 +13,4 @@ models/
 # I have original codes locally for debug -Ville
 **/MNIST_FF
 **/CIFAR_FF
+**/RESULTS

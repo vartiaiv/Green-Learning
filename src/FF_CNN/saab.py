@@ -118,10 +118,10 @@ def find_kernels_pca(sample_patches, num_kernels, energy_percent):
     if FLAGS.use_dataset == 'cifar10':
         whiten = True
         # Remove patch mean
-        training_patches, dc=remove_mean(training_patches, axis=1)
-        training_patches=remove_zero_patch(training_patches)
+        training_patches, dc = remove_mean(training_patches, axis=1)
+        training_patches = remove_zero_patch(training_patches)
         # Remove feature mean (Set E(X)=0 for each dimension)
-        training_patches, _=remove_mean(training_patches, axis=0)
+        training_patches, _ = remove_mean(training_patches, axis=0)
 
     # PCA model
     pca = PCA(n_components=training_patches.shape[1], svd_solver='full', whiten=whiten)
