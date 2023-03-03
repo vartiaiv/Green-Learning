@@ -4,7 +4,7 @@ import math
 import torch
 
 # for testing FF_CNN perf utilities
-from src.FF_CNN.utils.perf import mem_profile, timeit
+from src.FF_CNN.utils.perf import mem_profile, mytimer
 
 
 # MACs = multiply–accumulate operations
@@ -103,7 +103,7 @@ def tensorsTest():
 
     print(f'Result: y = {a.item()} + {b.item()} x + {c.item()} x^2 + {d.item()} x^3')
 
-@timeit
+@mytimer
 @mem_profile
 def tensorAutogradTest():
     # Create Tensors to hold input and outputs. 

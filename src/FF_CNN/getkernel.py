@@ -6,10 +6,10 @@ from absl import logging
 import saab
 import data_ffcnn as data_ffcnn
 from utils.io import save_params
-from utils.perf import timeit
+from utils.perf import mytimer
 
 
-@timeit
+@mytimer
 def main(argv):   
     # io paths
     modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")

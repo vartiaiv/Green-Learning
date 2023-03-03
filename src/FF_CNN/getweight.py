@@ -1,8 +1,6 @@
 import os
-# NOTE Comment the next line and see if any warnings come from KMeans
-# If needed, do this BEFORE importing numpy and KMeans or any other module using them
-# Avoid memory leak with KMeans on Windows with MKL, when less chunks than available threads
-os.environ["OMP_NUM_THREADS"] = '1'  
+### NOTE if you see warnings from KMeans uncomment the next lane and adjust the value properly
+# os.environ["OMP_NUM_THREADS"] = '6'
 
 from absl import app
 from params_ffcnn import FLAGS
@@ -11,7 +9,7 @@ import saab
 
 import data_ffcnn
 from utils.io import save_params, load_params
-from utils.perf import timeit
+from utils.perf import mytimer
 
 import numpy as np
 from sklearn.cluster import KMeans
@@ -26,19 +24,17 @@ def to_categorical(y, num_classes):
     return np.eye(num_classes, dtype='uint8')[y]
 
 
-@timeit
+@mytimer
 def main(argv):
     # io paths
     modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")
-
-    # load features
-    feat = load_params(modelpath, "feat.pkl")
-
-    # read data
-    _, train_labels, _, _, class_list = data_ffcnn.import_data()
-
-    train_feat = feat['training_feature']
     
+    # read data
+    train_images, train_labels, _, _, class_list = data_ffcnn.import_data()
+
+    # get features with PCA
+    pca_params = load_params(modelpath, "pca_params.pkl")
+    train_feat = saab.initialize(train_images, pca_params)
     train_feat = train_feat.reshape(train_feat.shape[0], -1)
     print("S4 shape:", train_feat.shape)
     print('--------Finish Feature Extraction subnet--------')
@@ -53,12 +49,8 @@ def main(argv):
     
     llsr_weights = {}
     llsr_biases = {}
-    # if FLAGS.use_dataset == 'mnist':
-    #     helper = mnist_helper
-    # elif FLAGS.use_dataset == 'cifar10':
-    #     helper = cifar10_helper
 
-    # NOTE Testing starts here        
+    # get weights
     for k in range(len(num_clusters)):
         if k != len(num_clusters)-1:
             # -------------------------------------------------------------------------------------

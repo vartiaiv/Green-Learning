@@ -4,7 +4,7 @@ from functools import wraps
 from typing import Callable
 
 
-def timeit(func: Callable):
+def mytimer(func: Callable):
     """ A decorator for function processes time """
     @wraps(func)
     def timeit_wrapper(*args, **kwargs):

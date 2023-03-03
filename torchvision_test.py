@@ -6,10 +6,10 @@ from torchvision import datasets
 from matplotlib import pyplot as plt
 
 # for testing FF_CNN perf utilities
-from src.FF_CNN.utils.perf import timeit  # decorator for timing functions
+from src.FF_CNN.utils.perf import mytimer  # decorator for timing functions
 
 
-@timeit
+@mytimer
 def LoadData(num_batch=64):
     ''' Load datasets into data_root and transform them into PyTorch tensors.
     Dataset is loaded only if it does not exists in data_root.
