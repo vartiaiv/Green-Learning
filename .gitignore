@@ -5,10 +5,11 @@ datasets/
 *.egg*
 build/
 build/
-models/
+*/models/*
 *.dat
 *.png
 *.txt
+batch_submit.sh
 
 # I have original codes locally for debug -Ville
 **/MNIST_FF
