@@ -83,7 +83,7 @@ def preprocess_images(images, to_size=(32, 32)):
     # Calculate the needed padding
     diff_h = (to_size[0]-h)
     diff_w = (to_size[1]-w)
-    if diff_h >= 0 and diff_w >= 0:
+    if diff_h <= 0 and diff_w <= 0:
         return images  # don't do anything
 
     # Calculate axis-wise padding and add any surplus to the bottom-right corner

@@ -1,10 +1,11 @@
 from absl import flags
 
 # NOTE change dataset name here, other parameters are selected depending on it
-USE_DATASET = 'mnist'  # options 'mnist', 'cifar10'
+USE_DATASET = 'cifar10'  # options 'mnist', 'cifar10'
+USE_NUM_IMAGES = 500  # number of sample images in getkernel.py (-1 to use all images) 
 
 # No need to any of these values for full tests
-USE_PORTION = 1.0  # 1.0 use entire dataset; size subset as a percentage of original dataset. 
+USE_PORTION = 0.02  # 1.0 use entire dataset for weights; size subset as a percentage of original dataset. 
 DATASETS_ROOT = r".\datasets"  # shared between both networks
 MODELS_ROOT = r".\models\ffcnn"  # separate folder for each network
 USE_CLASSES = '0-9'  # classes to be used, 0-9 is for all 10 classes to be used (like MNIST)
@@ -15,7 +16,6 @@ NUM_KERNELS = '5,15' if USE_DATASET == 'mnist' else '31,63'
 # fully connected layer dims: originally 120,84,10 for mnist and "200,100,10" for cifar10
 NUM_CLUSTERS = '120,84,10' if USE_DATASET == 'mnist' else '200,100,10'
 ENERGY_PERCENT = None
-USE_NUM_IMAGES = -1  # -1 to use all images in getkernel.py
 
 
 # NOTE ignore the flags below if you dont want to use command line
