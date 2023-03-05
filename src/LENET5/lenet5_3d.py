@@ -74,9 +74,7 @@ class LeNet5_3D(Module):
         y = self.block_2(y)
         # y = self.block_3(y)
 
-        print(y.shape)
         y = y.flatten(start_dim=1)
-        print(y.shape)
         y = self.fc1(y)
         y = self.fc2(y)
         y = self.fc3(y)
