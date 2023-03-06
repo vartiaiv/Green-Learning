@@ -1,5 +1,6 @@
 import os
 ### NOTE if you see warnings from KMeans uncomment the next lane and adjust the value properly
+### NOTE However this makes the process very slow as there is only 1 thread!
 # os.environ["OMP_NUM_THREADS"] = '1'
 
 from absl import app
@@ -7,14 +8,12 @@ from params_ffcnn import FLAGS
 from absl import logging
 
 import saab
-import data_ffcnn
 from utils.io import save_params, load_params
 from utils.perf import mytimer
 
 import numpy as np
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.metrics.pairwise import euclidean_distances
-import sklearn
 from sklearn.metrics import accuracy_score
 from numpy import linalg as LA
 
@@ -26,11 +25,15 @@ def to_categorical(y, num_classes):
 
 @mytimer
 def main(argv):
+    print('--------LLSR Training --------')
     # io paths
     modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")
-       
+    print("Model name:", os.path.basename(modelpath))       
+
     train_feat = load_params(modelpath, 'train_feat.pkl')
     train_labels = load_params(modelpath, 'train_labels.pkl')
+
+    print("S4 train features size:", train_feat.shape)
 
     # feature normalization
     std_var = (np.std(train_feat, axis=0)).reshape(1,-1)
@@ -43,7 +46,7 @@ def main(argv):
     llsr_weights = {}
     llsr_biases = {}
 
-    # get weights
+    # LLSR training loop
     for k in range(len(num_clusters)):
         if k != len(num_clusters)-1:
             # -------------------------------------------------------------------------------------
@@ -100,7 +103,10 @@ def main(argv):
                     feature_special=np.zeros((index.shape[0],train_feat.shape[1]))
                     for i in range(index.shape[0]):
                         feature_special[i] = train_feat[index[i]]
-                    kmeans = KMeans(n_clusters=num_class_clusters).fit(feature_special)  # error?
+                    # kmeans = KMeans(n_clusters=num_class_clusters).fit(feature_special)  # error?
+                    # NOTE The above kmeans is the original
+                    kmeans = MiniBatchKMeans(n_clusters=num_class_clusters).fit(feature_special)
+                    
                     pred_labels = kmeans.labels_
                     for i in range(feature_special.shape[0]):
                         labels[index[i], pred_labels[i] + cid*num_class_clusters] = 1
@@ -152,6 +158,8 @@ def main(argv):
             pred_labels = np.argmax(train_feat, axis=1)
             acc_train = accuracy_score(train_labels, pred_labels)
             print('training acc is {}'.format(acc_train))
+
+    print('--------Finish LLSR training --------')
 
     save_params(modelpath, "llsr_weights.pkl", llsr_weights)
     save_params(modelpath, "llsr_biases.pkl", llsr_biases)

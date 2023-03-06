@@ -11,18 +11,30 @@ from utils.perf import mytimer
 import numpy as np
 
 @mytimer
-def main(argv):    
-    # io paths
+def main(argv):
+    print('--------Feature Extraction --------')
     modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")
+    print("Model name:", os.path.basename(modelpath))
+    
+    use_num_features = FLAGS.use_num_features
+    print("- USE_NUM_FEATURES:", use_num_features)
 
-    # read data
-    train_images, train_labels, _ = data_ffcnn.import_data()
+    # load train and test data
+    train_images, train_labels, class_list = data_ffcnn.import_data()
     test_images, test_labels, _ = data_ffcnn.import_data(train=False)
 
-    # get features with PCA
+    # select subset of features
+    train_images, train_labels = \
+        saab.select_balanced_subset(train_images, train_labels, use_num_features, class_list)
+
+    print("Train images size:", train_images.shape)
+    print("Test images size:", test_images.shape)
+
+    # load trained PCA params for feature extraction
     pca_params = load_params(modelpath, "pca_params.pkl")
 
-    print('--------Extract Training features--------')
+    # --------------------------------------------------------- training features
+    print('--------Training features --------')
     train_feat = saab.initialize(train_images, pca_params)
     train_feat = train_feat.reshape(train_feat.shape[0], -1)
     # feature normalization
@@ -30,9 +42,8 @@ def main(argv):
     std_var[std_var == 0] = 1  # avoid divide by 0 error
     train_feat = train_feat/std_var
     print("S4 training features shape:", train_feat.shape)
-    print('--------Finish Feature Extraction subnet--------')
-
-    print('--------Extract Testing features--------')
+    # --------------------------------------------------------- testing features
+    print('--------Testing features --------')
     test_feat = saab.initialize(test_images, pca_params)
     test_feat = test_feat.reshape(test_feat.shape[0], -1)
     # feature normalization
@@ -40,8 +51,11 @@ def main(argv):
     std_var[std_var == 0] = 1  # avoid divide by 0 error
     test_feat = test_feat/std_var
     print("S4 test features shape:", test_feat.shape)
-    print('--------Finish Feature Extraction subnet--------')
+    # ---------------------------------------------------------
 
+    print('--------Finish Feature Extraction --------')
+
+    # NOTE important! save these temporarily for getweight
     save_params(modelpath, "train_feat.pkl", train_feat)
     save_params(modelpath, "train_labels.pkl", train_labels)
     save_params(modelpath, "test_feat.pkl", test_feat)

@@ -11,28 +11,21 @@ from utils.perf import mytimer
 
 @mytimer
 def main(argv):   
+    print('--------PCA training --------')
     # io paths
     modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")
+    print("Model name:", os.path.basename(modelpath))
 
-    # read data
-    train_images, train_labels, class_list = data_ffcnn.import_data()
-
-    kernel_sizes = saab.parse_list_string(FLAGS.kernel_sizes)
-    if FLAGS.num_kernels:
-        num_kernels = saab.parse_list_string(FLAGS.num_kernels)
-    else:
-        num_kernels = None
-    energy_percent = FLAGS.energy_percent
     use_num_images = FLAGS.use_num_images
-    if use_num_images > len(train_images):
-        use_num_images = len(train_images)
 
-    print('Saab parameters:')
-    print('kernel_sizes:', kernel_sizes)
-    print('number_kernels:', num_kernels)
-    print('energy_percent:', energy_percent)
-    print('use_num_images:', use_num_images if use_num_images > 0 else 'all')
-    print('class_list:', class_list)
+    num_kernels = saab.parse_list_string(FLAGS.num_kernels)
+    kernel_sizes = saab.parse_list_string(FLAGS.kernel_sizes)
+    energy_percent = FLAGS.energy_percent
+    print("- USE_NUM_IMAGES:", use_num_images)
+
+    # load train data
+    train_images, train_labels, class_list = data_ffcnn.import_data()
+    print("Train images size:", train_images.shape)
 
     pca_params = saab.multi_Saab_transform(train_images, train_labels,
                          kernel_sizes=kernel_sizes,
@@ -40,7 +33,7 @@ def main(argv):
                          energy_percent=energy_percent,
                          use_num_images=use_num_images,
                          class_list=class_list)
-
+    print('--------Finish PCA training --------')
     save_params(modelpath, "pca_params.pkl", pca_params)
 
 

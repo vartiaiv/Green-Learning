@@ -15,10 +15,17 @@ from sklearn.metrics import accuracy_score
 
 @mytimer
 def main(argv):
+    print("--------Testing --------\n")
+
     # io paths
     modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")
+    print("Loading model:", os.path.basename(modelpath))
 
-    # load test features
+    # load model parameters
+    llsr_weights = load_params(modelpath, "llsr_weights.pkl")
+    llsr_biases = load_params(modelpath, "llsr_biases.pkl")
+
+    # load temp files; test feat and labels (not really params)
     test_feat = load_params(modelpath, 'test_feat.pkl')
     test_labels = load_params(modelpath, 'test_labels.pkl')
 
@@ -27,9 +34,6 @@ def main(argv):
     num_classes = 10 # expect to use all classes
     num_clusters = saab.parse_list_string(FLAGS.num_clusters)
 
-    # load model parameters
-    llsr_weights = load_params(modelpath, "llsr_weights.pkl")
-    llsr_biases = load_params(modelpath, "llsr_biases.pkl")
 
     # Start testing
     for k in range(len(num_clusters)):
@@ -63,7 +67,8 @@ def main(argv):
             pred_labels = np.argmax(test_feat, axis=1)
             acc_test = accuracy_score(test_labels, pred_labels)
             print('testing acc is {}'.format(acc_test))        
-
+    
+    print("--------Testing done --------")
 
 if __name__ == "__main__":
     try:

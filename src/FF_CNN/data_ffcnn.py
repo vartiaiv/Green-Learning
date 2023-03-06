@@ -24,10 +24,7 @@ def import_data(train=True):
     data_set = DATASET(data_root, train=train, download=True, transform=T, target_transform=None)
     
     # selected classes
-    use_classes = FLAGS.use_classes
-    class_list = [0,1,2,3,4,5,6,7,8,9]  # default
-    if use_classes != "0-9":
-        class_list = saab.parse_list_string(use_classes)
+    class_list = [0,1,2,3,4,5,6,7,8,9]  # default all 10 classes
 
     # extract images as tensors
     images = data_set.data    # train_images = train_set.data
@@ -40,16 +37,8 @@ def import_data(train=True):
     # cifar10 images are already this size so the function doesn't do anything
     images = preprocess_images(images, (32, 32))
 
-    # select portion on dataset type; train or test
-    images_portion = FLAGS.train_images_portion if train else FLAGS.test_images_portion
-    if 0 < images_portion < 1.0:
-        subset_num_images = FLAGS.use_num_images if train else round(images_portion * len(data_set))  # subset size
-        # select balanced subsets (classes uniform distributed)
-        seed = FLAGS.use_seed  # for reproducible subset selection!
-        images, labels = saab.select_balanced_subset(images, labels, subset_num_images, class_list, shuffle_seed=seed)
-
     images, labels = get_data_for_class(images, labels, class_list)
-    print(f"{'Training' if train else 'Testing'} image size:", images.shape)  
+    # print(f"{'Training' if train else 'Testing'} image size:", images.shape)  
 
     return images, labels, class_list
 
