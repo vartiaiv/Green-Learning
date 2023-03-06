@@ -8,7 +8,6 @@ from absl import logging
 import os
 from utils.io import load_params
 from utils.perf import mytimer
-import timeit
 
 import numpy as np
 from sklearn.metrics import accuracy_score
@@ -19,20 +18,13 @@ def main(argv):
     # io paths
     modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")
 
-    # read data
-    _, _, test_images, test_labels, class_list = data_ffcnn.import_data()
+    # load test features
+    test_feat = load_params(modelpath, 'test_feat.pkl')
+    test_labels = load_params(modelpath, 'test_labels.pkl')
 
-    # get features with PCA
-    pca_params = load_params(modelpath, "pca_params.pkl")
-    test_feat = saab.initialize(test_images, pca_params)
-    test_feat = test_feat.reshape(test_feat.shape[0], -1)
-    print("S4 shape:", test_feat.shape)
-    print('--------Finish Feature Extraction subnet--------')
+    print("S4 test features shape:", test_feat.shape)
 
-    # feature normalization
-    std_var = (np.std(test_feat, axis=0)).reshape(1,-1)
-    test_feat = test_feat/std_var
-    num_classes = len(class_list)
+    num_classes = 10 # expect to use all classes
     num_clusters = saab.parse_list_string(FLAGS.num_clusters)
 
     # load model parameters

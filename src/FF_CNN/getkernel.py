@@ -15,7 +15,7 @@ def main(argv):
     modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")
 
     # read data
-    train_images, train_labels, _, _, class_list = data_ffcnn.import_data()
+    train_images, train_labels, class_list = data_ffcnn.import_data()
 
     kernel_sizes = saab.parse_list_string(FLAGS.kernel_sizes)
     if FLAGS.num_kernels:

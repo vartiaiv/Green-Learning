@@ -6,63 +6,52 @@ from absl import logging
 import numpy as np
 from torchvision.transforms import Compose, ToTensor
 from torchvision.datasets import CIFAR10, MNIST
-from sklearn.model_selection import train_test_split
 
 import saab
 
 
-def import_data():
-    """ Return training and testing images, labels and a classlist """
+def import_data(train=True):
+    """ Return images, labels and a classlist """
+    
     # choose corresponding torchvision.datasets function
-    use_dataset = FLAGS.use_dataset
-    datasets_dict = {'cifar10': CIFAR10, 'mnist': MNIST}  
-    data_root = os.path.join(FLAGS.datasets_root, use_dataset)
+    datasets_dict = {'cifar10': CIFAR10, 'mnist': MNIST}
+    DATASET = datasets_dict[FLAGS.use_dataset]
+    T = Compose([
+        # ToTensor()
+    ])
+    data_root = os.path.join(FLAGS.datasets_root, FLAGS.use_dataset)
     print(f"Importing data from: {data_root}")
-
+    data_set = DATASET(data_root, train=train, download=True, transform=T, target_transform=None)
+    
     # selected classes
     use_classes = FLAGS.use_classes
     class_list = [0,1,2,3,4,5,6,7,8,9]  # default
     if use_classes != "0-9":
         class_list = saab.parse_list_string(use_classes)
 
-
-    DATASET = datasets_dict[use_dataset]
-    T = Compose([
-        # ToTensor()
-    ])
-    train_set = DATASET(data_root, train=True, download=True, transform=T, target_transform=None)
-    test_set = DATASET(data_root, train=False, download=True, transform=T, target_transform=None)
-    
     # extract images as tensors
-    train_images = train_set.data    # train_images = train_set.data
-    test_images = test_set.data      # test_images = test_set.data
+    images = data_set.data    # train_images = train_set.data
 
     # extract labels as numpy arrays
-    train_labels = np.array(train_set.targets)
-    test_labels = np.array(test_set.targets)
+    labels = np.array(data_set.targets)
 
     # zero pad images into 32 by 32
     # also add missing 4th dimension for non-RGB images
     # cifar10 images are already this size so the function doesn't do anything
-    train_images = preprocess_images(train_images, (32, 32))
-    test_images = preprocess_images(test_images, (32, 32))
+    images = preprocess_images(images, (32, 32))
 
-    if 0 < FLAGS.use_portion < 1.0:
-        use_portion = FLAGS.use_portion
-        num_train_images = round(use_portion * len(train_set))  # subset size
-        num_test_images = round(use_portion * len(test_set))  # subset size
+    # select portion on dataset type; train or test
+    images_portion = FLAGS.train_images_portion if train else FLAGS.test_images_portion
+    if 0 < images_portion < 1.0:
+        subset_num_images = FLAGS.use_num_images if train else round(images_portion * len(data_set))  # subset size
         # select balanced subsets (classes uniform distributed)
         seed = FLAGS.use_seed  # for reproducible subset selection!
-        train_images, train_labels = saab.select_balanced_subset(train_images, train_labels, num_train_images, class_list, shuffle_seed=seed)
-        test_images, test_labels = saab.select_balanced_subset(train_images, train_labels, num_test_images, class_list, shuffle_seed=seed)
+        images, labels = saab.select_balanced_subset(images, labels, subset_num_images, class_list, shuffle_seed=seed)
 
-    train_images, train_labels = get_data_for_class(train_images, train_labels, class_list)
-    test_images, test_labels = get_data_for_class(test_images, test_labels, class_list)
-    
-    print('Training image size:', train_images.shape)  
-    print('Testing_image size:', test_images.shape)
+    images, labels = get_data_for_class(images, labels, class_list)
+    print(f"{'Training' if train else 'Testing'} image size:", images.shape)  
 
-    return train_images, train_labels, test_images, test_labels, class_list    
+    return images, labels, class_list
 
 
 def preprocess_images(images, to_size=(32, 32)):
@@ -112,7 +101,8 @@ def get_data_for_class(images, labels, cls):
 
 # debug
 def main(argv):
-    import_data()
+    import_data(train=True)
+    import_data(train=False)
 
 if __name__ == "__main__":
     try:

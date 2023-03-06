@@ -1,12 +1,12 @@
 import os
 ### NOTE if you see warnings from KMeans uncomment the next lane and adjust the value properly
-# os.environ["OMP_NUM_THREADS"] = '6'
+# os.environ["OMP_NUM_THREADS"] = '1'
 
 from absl import app
 from params_ffcnn import FLAGS
 from absl import logging
-import saab
 
+import saab
 import data_ffcnn
 from utils.io import save_params, load_params
 from utils.perf import mytimer
@@ -28,24 +28,17 @@ def to_categorical(y, num_classes):
 def main(argv):
     # io paths
     modelpath = os.path.join(FLAGS.models_root, f"ffcnn_{FLAGS.use_dataset}")
-    
-    # read data
-    train_images, train_labels, _, _, class_list = data_ffcnn.import_data()
+       
+    train_feat = load_params(modelpath, 'train_feat.pkl')
+    train_labels = load_params(modelpath, 'train_labels.pkl')
 
-    # get features with PCA
-    pca_params = load_params(modelpath, "pca_params.pkl")
-    train_feat = saab.initialize(train_images, pca_params)
-    train_feat = train_feat.reshape(train_feat.shape[0], -1)
-    print("S4 shape:", train_feat.shape)
-    print('--------Finish Feature Extraction subnet--------')
-    
     # feature normalization
     std_var = (np.std(train_feat, axis=0)).reshape(1,-1)
     std_var[std_var == 0] = 1  # avoid divide by 0 error
     train_feat = train_feat/std_var  
 
     num_clusters = saab.parse_list_string(FLAGS.num_clusters)
-    num_classes = len(class_list)  # expect to use all classes
+    num_classes = 10  # expect to use all classes
     
     llsr_weights = {}
     llsr_biases = {}
