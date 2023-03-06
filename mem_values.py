@@ -2,7 +2,6 @@ from glob import glob
 
 if __name__ == "__main__":
     filenames = glob("mprofile_*.dat")
-    newest_file = sorted(filenames)[-1]
     for filename in filenames:
         mems = []
         with open(filename) as f:

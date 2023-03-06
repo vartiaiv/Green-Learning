@@ -161,7 +161,7 @@ def multi_Saab_transform(images, labels, kernel_sizes, num_kernels, energy_perce
     :param energy_percent: the energy percent to be kept in all PCA stages.
            if num_kernels is set, energy_percent will be ignored.
     :param use_num_images: use a subset of train images
-    :param use_classes: the classes of train images
+    :param class_list: list of classes of train images
     return: pca_params: PCA kernels and mean
     '''
 
