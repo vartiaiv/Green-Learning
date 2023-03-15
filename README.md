@@ -1,7 +1,9 @@
 # Green-Learning
-The goal is to experiment with neural networks and find an efficient (low computation) solutions for a machine learning problem.
+This repository exists mainly for documenting practical work done as part of Tampere University seminar course on Media Analysis. The course involves conducting research on different machine learning (ML) and artificial intelligence (AI) applications on various media (images, audio, text). It should be noted that the repository is **not** designed to be ready-to-use as the work is rather explorative.
 
-The approach is to use a feedforward network using SAAB (https://github.com/davidsonic/Interpretable_CNNs_via_Feedforward_Design) and compare it with a traditional CNN such as AlexNet.
+Our goal is to find an efficient (low computation) solutions for an image classification problem. Convolutional neural networks (CNNs) are known to be trained using gradient-based optimization techniques i.e. backpropagation (BP). For deep models BP can be mathematically intractable so it is crucial to find alternative approaches for deep network optimization. 
+
+We analyzed the efficiency of a feedforward (FF) design of a CNN without any BP proposed by Kuo et al. [1]. We adapt the provided code for the FF design [2] for debugging and efficiency measuring purposes and implement the BP design using the PyTorch ML library. Python standard library and various packages listed below are used for obtaining the efficiency and utility metrics.
 
 **The packages installed:**  
 - pytorch (CPU or GPU)  
@@ -69,5 +71,15 @@ or
 
 ## Running the code
 ### Command line
-You can use command line to run the python scripts. Make sure to have the correct conda environment activated.  
+You can use command line to run the python scripts. Make sure to have the correct conda environment activated. The expected run directory is the top level directory i.e. `Green-Learning/`.
 
+The FF_CNN training steps can be run separately via scripts `getkernel.py`, `getfeature.py` and `getweights.py` OR in one go using `train.py` and tested using test.py
+
+The LENET5 can be trained and tested in `main.py` or separately via `train_lenet.py` and `test_lenet.py`. Script `time_test.py` is like `main.py` but uses PyTorch Timer to clock the run times for training and testing.
+
+## References
+[1] C.-C. J. Kuo, M. Zhang, S. Li, J. Duan, and Y. Chen, “Interpretable convolutional neural networks via feedforward design,” Journal of Visual Communication and         Image Representation, vol. 60, pp. 346–359, Apr. 2019, doi: 10.1016/j.jvcir.2019.03.010.
+
+[2] jialiduan, “Interpretable_CNNs_via_Feedforward_design.” Feb. 07, 2023. Accessed: Mar. 09, 2023. [Online]. Available: https://github.com/davidsonic/Interpretable_CNNs_via_Feedforward_Design
+
+[3] Y. Lecun, L. Bottou, Y. Bengio, and P. Haffner, “Gradient-based learning applied to document recognition,” Proceedings of the IEEE, vol. 86, no. 11, pp. 2278–2324, 1998, doi: 10.1109/5.726791.
